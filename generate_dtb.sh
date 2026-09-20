@@ -458,18 +458,18 @@ case "${TEST_CASE}" in
         if [ "$TEST_CASE" = "dom0-smp-test" ]; then
             PLATFORM_PCPU_NUM=4
         elif [ "$TEST_CASE" = "dom0-test" ]; then
-            PLATFORM_PCPU_NUM=1
+            PLATFORM_PCPU_NUM=4
         fi
 
         CONFIG_FILE="dom0.conf"
         PLATFORM_NAME=dom0-qemu-virt
-        PLATFORM_RAM_SIZE=2g
-        PLATFORM_XEN_BOOTARGS="com1=poll sched=null"
+        PLATFORM_RAM_SIZE=6g
+        PLATFORM_XEN_BOOTARGS="com1=poll sched=null dom0_max_vcpus=1 dom0_mem=1024M"
         DOM0_KERNEL_ADDR=0x808ef000
         DOM0_KERNEL_PATH=${KERNEL}
         DOM0_RAMDISK_ADDR=0x90400000
         DOM0_RAMDISK_PATH=${INITRD}
-        DOM0_BOOTARGS="rw root=/dev/ram console=hvc0 keep_bootcon bootmem_debug debug dom0_mem=512M"
+        DOM0_BOOTARGS="rw root=/dev/ram console=hvc0 keep_bootcon bootmem_debug debug"
 
         echo "PLATFORM_NAME=\"${PLATFORM_NAME}\"
         PLATFORM_CPU_NUM=\"${PLATFORM_PCPU_NUM}\"

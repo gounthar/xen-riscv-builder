@@ -3,6 +3,10 @@ nproc ?= $(shell nproc)
 LINUX_ROOT?=$(BUILD_DIR)/linux
 OPENSBI_ROOT?=$(BUILD_DIR)/opensbi
 KERNEL?=$(LINUX_ROOT)/arch/riscv/boot/Image.gz
+# dom0 and domU use different kernels. KERNEL is dom0's (loaded by QEMU at
+# line 38); DOMU_KERNEL is the one copied into the initrd for xl to boot a
+# guest with. They defaulted to the same file, which conflated the two.
+DOMU_KERNEL?=$(KERNEL)
 KERNEL_SYMBOL?=$(LINUX_ROOT)/vmlinux
 
 QEMU?=$(BINARIES_DIR)/qemu-system-riscv64
@@ -15,11 +19,13 @@ XEN_BIN?=$(XEN_ROOT)/xen/xen
 XEN_SYMBOL?=$(XEN_ROOT)/xen/xen-syms
 
 GDB?=/usr/bin/gdb-multiarch
+LIBCHECK?=$(BUILD_DIR)/check-initrd-libs.sh
 
 INITRD_STAMP := .stamp_initrd_with_tools
 XEN_MAKE := $(MAKE) -C $(XEN_ROOT) -j$(nproc)
 
 TOOLS_CONFIG = \
+	$(XEN_CONFIG) && \
 	cp $(CONFIGS_DIR)/config_tools.status $(XEN_ROOT)/tools/config.status && \
 	cd $(XEN_ROOT)/tools && bash ./config.status
 
@@ -31,9 +37,9 @@ QEMU_BASE_FLAGS = \
 	-M virt,aclint=off,aia=aplic-imsic,aia-guests=7 \
 	-cpu rv64,smstateen=on \
 	-bios $(OPENSBI) \
-	-smp 1 \
+	-smp 4 \
 	-nographic \
-	-m 2g \
+	-m 6g \
 	-kernel $(XEN_BIN) \
 	-device loader,file=$(KERNEL),addr=0x808ef000 \
 	-device loader,file=$(INITRD),addr=0x90400000 \
@@ -93,13 +99,33 @@ create-tools-dirs: create-common-dirs
 	mkdir -p $(INITRD_DIR)/var/lib/xen
 	mkdir -p $(INITRD_DIR)/var/lock
 	mkdir -p $(INITRD_DIR)/domu
+# xen-hotplug-common.sh:23 does exec 2>>/var/log/xen/xen-hotplug.log, and
+# a failed exec redirect kills a non-interactive bash outright, so the
+# directory has to exist or every hotplug script dies before doing
+# anything. locking.sh:22 wants the second one.
+	mkdir -p $(INITRD_DIR)/var/log/xen
+	mkdir -p $(INITRD_DIR)/var/run/xen-hotplug
+# hotplugpath.sh points bindir/sbindir/LIBEXEC_BIN at /usr/local/{bin,sbin}
+# and /usr/local/lib/xen/bin, none of which exist; the tools live under
+# /dist, and initrd-tools moves usr/local/lib/* into /lib. Link rather
+# than patch their PATH, so the stock scripts run unmodified.
+	mkdir -p $(INITRD_DIR)/usr/local
+	ln -sfn /dist/install/usr/local/bin $(INITRD_DIR)/usr/local/bin
+	ln -sfn /dist/install/usr/local/sbin $(INITRD_DIR)/usr/local/sbin
+	ln -sfn /lib $(INITRD_DIR)/usr/local/lib
+# libxl's compiled-in XEN_SCRIPT_DIR is /etc/xen/scripts (tools/config.h).
+	ln -sfn /dist/install/etc/xen/scripts $(INITRD_DIR)/etc/xen/scripts
 	cp $(CONFIGS_DIR)/xl.conf $(INITRD_DIR)/etc/xen/
 	cp $(CONFIGS_DIR)/domu.cfg $(INITRD_DIR)/domu/
-	cp $(KERNEL) $(INITRD_DIR)/domu/
+	cp $(DOMU_KERNEL) $(INITRD_DIR)/domu/Image.gz
 	cp $(DOMU_INITRD_IMG) $(INITRD_DIR)/domu/initrd.img
 
 create-common-dirs:
 	mkdir -p $(INITRD_DIR)/dev
+# Mount point for a run-time tmpfs. The ext2 rootfs IS the ramdisk, so a
+# file written under /domu spends the filesystem's own free blocks; a disk
+# image belongs on a tmpfs, which costs dom0 RAM instead.
+	mkdir -p $(INITRD_DIR)/mnt
 	mkdir -p $(INITRD_DIR)/dist
 	mkdir -p $(INITRD_DIR)/proc
 	mkdir -p $(INITRD_DIR)/sys
@@ -118,11 +144,13 @@ initrd : $(INITRD_STAMP) create-common-dirs
 	> $(RCS_FILE) && \
 	chmod +x $(RCS_FILE)
 	cp $(RCS_FILE) $(INITRD_DIR)/etc/init.d/
+	sh $(LIBCHECK) $(INITRD_DIR)
 	genext2fs -b 6500 -N 1024 -U -d $(INITRD_DIR)/ $(INITRD)
 
 initrd-tools: dist-tools create-tools-dirs
 	echo "Building initrd with tools image"
-	cp -r $(XEN_ROOT)/dist/* $(INITRD_DIR)/dist/
+	cd $(XEN_ROOT)/dist && tar --exclude='*.a' -cf - . \
+	    | (cd $(INITRD_DIR)/dist && tar -xf -)
 	mv $(INITRD_DIR)/dist/install/usr/local/lib/* $(INITRD_DIR)/lib/
 	printf '%s\n' \
 	'#!/bin/sh' \
@@ -137,7 +165,8 @@ initrd-tools: dist-tools create-tools-dirs
 	> $(RCS_FILE) && \
 	chmod +x $(RCS_FILE)
 	cp $(RCS_FILE) $(INITRD_DIR)/etc/init.d/
-	genext2fs -b 200000 -N 1444 -U -d $(INITRD_DIR)/ $(INITRD)
+	sh $(LIBCHECK) $(INITRD_DIR)
+	genext2fs -b 250000 -N 1444 -U -d $(INITRD_DIR)/ $(INITRD)
 	
 # Build targets
 build-tools:
