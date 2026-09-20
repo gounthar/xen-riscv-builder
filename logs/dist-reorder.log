@@ -1,0 +1,1229 @@
+### dist-xen FIRST (creates config/Paths.mk) ###
+cp /tmp/cfg/config_xen.status /build/xen/config.status && cd /build/xen && bash ./config.status
+config.status: creating config/Toplevel.mk
+config.status: creating config/Paths.mk
+make -C /build/xen -j20 dist-xen
+make[1]: Entering directory '/build/xen'
+make -C xen install
+make[2]: Entering directory '/build/xen/xen'
+  UPD     include/xen/compile.h
+ Xen 4.18-unstable
+make[3]: Nothing to be done for 'include'.
+make[3]: 'arch/riscv/include/asm/asm-offsets.h' is up to date.
+  CC      arch/riscv/domain_build.o
+  CC      arch/riscv/setup.o
+  CC      common/version.o
+  LD      common/built_in.o
+  LD      arch/riscv/built_in.o
+  LD      prelink.o
+  LDS     arch/riscv/xen.lds
+riscv64-linux-gnu-ld     --no-warn-rwx-segments -T arch/riscv/xen.lds -N prelink.o \
+    ./common/symbols-dummy.o -o ./.xen-syms.0
+riscv64-linux-gnu-nm -pa --format=sysv ./.xen-syms.0 \
+	| ./tools/symbols  --sysv --sort >./.xen-syms.0.S
+make -f ./Rules.mk obj=. ./.xen-syms.0.o
+  CC      .xen-syms.0.o
+riscv64-linux-gnu-ld     --no-warn-rwx-segments -T arch/riscv/xen.lds -N prelink.o \
+    ./.xen-syms.0.o -o ./.xen-syms.1
+riscv64-linux-gnu-nm -pa --format=sysv ./.xen-syms.1 \
+	| ./tools/symbols  --sysv --sort >./.xen-syms.1.S
+make -f ./Rules.mk obj=. ./.xen-syms.1.o
+  CC      .xen-syms.1.o
+riscv64-linux-gnu-ld     --no-warn-rwx-segments -T arch/riscv/xen.lds -N prelink.o --build-id=sha1 \
+    ./.xen-syms.1.o -o xen-syms
+riscv64-linux-gnu-nm -pa --format=sysv ./xen-syms \
+	| ./tools/symbols --all-symbols --xensyms --sysv --sort \
+	>./xen-syms.map
+rm -f ./.xen-syms.[0-9]*
+riscv64-linux-gnu-objcopy -O binary -S xen-syms xen
+[ -d /build/xen/dist/install/boot ] || install -d -m0755 -p /build/xen/dist/install/boot
+install -m0644 -p xen /build/xen/dist/install/boot/xen-4.18-unstable
+ln -f -s xen-4.18-unstable /build/xen/dist/install/boot/xen-4.18
+ln -f -s xen-4.18-unstable /build/xen/dist/install/boot/xen-4
+ln -f -s xen-4.18-unstable /build/xen/dist/install/boot/xen
+[ -d "/build/xen/dist/install/usr/lib/debug" ] || install -d -m0755 -p /build/xen/dist/install/usr/lib/debug
+install -m0644 -p xen-syms /build/xen/dist/install/usr/lib/debug/xen-syms-4.18-unstable
+install -m0644 -p xen-syms.map /build/xen/dist/install/usr/lib/debug/xen-syms-4.18-unstable.map
+install -m0644 -p .config /build/xen/dist/install/boot/xen-4.18-unstable.config
+if [ -r xen.efi -a -n '' ]; then \
+	[ -d /build/xen/dist/install ] || install -d -m0755 -p /build/xen/dist/install; \
+	install -m0644 -p xen.efi /build/xen/dist/install/xen-4.18-unstable.efi; \
+	for x in map elf; do \
+		if [ -e xen.efi.$x ]; then \
+			install -m0644 -p xen.efi.$x /build/xen/dist/install/usr/lib/debug/xen-4.18-unstable.efi.$x; \
+		fi; \
+	done; \
+	ln -sf xen-4.18-unstable.efi /build/xen/dist/install/xen-4.18.efi; \
+	ln -sf xen-4.18-unstable.efi /build/xen/dist/install/xen-4.efi; \
+	ln -sf xen-4.18-unstable.efi /build/xen/dist/install/xen.efi; \
+	if [ -n '/boot/efi' -a -n '' ]; then \
+		 \
+		install -m0644 -p xen.efi /build/xen/dist/install/boot/efi/efi//xen-4.18-unstable.efi; \
+	elif [ "/build/xen/dist/install" = "dist/install" ]; then \
+		echo 'EFI installation only partially done (EFI_VENDOR not set)' >&2; \
+	fi; \
+fi
+make[2]: Leaving directory '/build/xen/xen'
+make[1]: Leaving directory '/build/xen'
+### Paths.mk now: ###
+prefix                   := /usr/local
+bindir                   := /usr/local/bin
+sbindir                  := /usr/local/sbin
+libdir                   := /usr/local/lib
+### dist-tools SECOND ###
+cp /tmp/cfg/config_tools.status /build/xen/tools/config.status && cd /build/xen/tools && bash ./config.status
+config.status: creating ../config/Tools.mk
+config.status: creating hotplug/common/hotplugpath.sh
+config.status: creating hotplug/FreeBSD/rc.d/xencommons
+config.status: creating hotplug/FreeBSD/rc.d/xendriverdomain
+config.status: creating hotplug/Linux/init.d/sysconfig.xencommons
+config.status: creating hotplug/Linux/init.d/sysconfig.xendomains
+config.status: creating hotplug/Linux/init.d/xen-watchdog
+config.status: creating hotplug/Linux/init.d/xencommons
+config.status: creating hotplug/Linux/init.d/xendomains
+config.status: creating hotplug/Linux/init.d/xendriverdomain
+config.status: creating hotplug/Linux/launch-xenstore
+config.status: creating hotplug/Linux/vif-setup
+config.status: creating hotplug/Linux/xen-hotplug-common.sh
+config.status: creating hotplug/Linux/xendomains
+config.status: creating hotplug/NetBSD/rc.d/xencommons
+config.status: creating hotplug/NetBSD/rc.d/xendriverdomain
+config.status: creating ocaml/libs/xs/paths.ml
+config.status: creating ocaml/xenstored/paths.ml
+config.status: creating ocaml/xenstored/oxenstored.conf
+config.status: creating config.h
+config.status: config.h is unchanged
+make -C /build/xen -j20 dist-tools
+make[1]: Entering directory '/build/xen'
+make -C tools/include install
+make[2]: Entering directory '/build/xen/tools/include'
+make -C xen-foreign
+mkdir -p xen/libelf acpi
+make[3]: Entering directory '/build/xen/tools/include/xen-foreign'
+find xen/ acpi/ -type l -exec rm '{}' +
+sed -e 's#@includedir@#/usr/local/include/xen#g' xen.COPYING.in > xen/COPYING
+ln -s /build/xen/tools/include/../../xen/include/public/*.h xen/
+ln -s /build/xen/tools/include/../../xen/include/public/*/ xen/
+ln -s ../xen-sys/Linux xen/sys
+ln -s /build/xen/tools/include/../../xen/include/xen/libelf.h /build/xen/tools/include/../../xen/include/xen/elfstructs.h xen/libelf/
+ln -s ../xen-foreign xen/foreign
+ln -s /build/xen/tools/include/../../xen/include/acpi/platform acpi/
+ln -s /build/xen/tools/include/../../xen/include/acpi/ac*.h acpi/
+./checker > tmp.size
+diff -u reference.size tmp.size
+rm tmp.size
+make[3]: Leaving directory '/build/xen/tools/include/xen-foreign'
+/build/xen/tools/include/../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/include/xen/arch-x86
+/build/xen/tools/include/../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/include/xen/arch-x86/hvm
+/build/xen/tools/include/../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/include/xen/arch-arm
+/build/xen/tools/include/../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/include/xen/arch-arm/hvm
+/build/xen/tools/include/../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/include/xen/arch-riscv
+/build/xen/tools/include/../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/include/xen/arch-riscv/hvm
+/build/xen/tools/include/../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/include/xen/foreign
+/build/xen/tools/include/../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/include/xen/hvm
+/build/xen/tools/include/../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/include/xen/io
+/build/xen/tools/include/../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/include/xen/sys
+/build/xen/tools/include/../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/include/xen/xsm
+/build/xen/tools/include/../../tools/cross-install -m0644 -p xen/COPYING /build/xen/dist/install/usr/local/include/xen
+/build/xen/tools/include/../../tools/cross-install -m0644 -p xen/*.h /build/xen/dist/install/usr/local/include/xen
+/build/xen/tools/include/../../tools/cross-install -m0644 -p xen/arch-x86/*.h /build/xen/dist/install/usr/local/include/xen/arch-x86
+/build/xen/tools/include/../../tools/cross-install -m0644 -p xen/arch-x86/hvm/*.h /build/xen/dist/install/usr/local/include/xen/arch-x86/hvm
+/build/xen/tools/include/../../tools/cross-install -m0644 -p xen/arch-arm/*.h /build/xen/dist/install/usr/local/include/xen/arch-arm
+/build/xen/tools/include/../../tools/cross-install -m0644 -p xen/arch-arm/hvm/*.h /build/xen/dist/install/usr/local/include/xen/arch-arm/hvm
+/build/xen/tools/include/../../tools/cross-install -m0644 -p xen/arch-riscv/hvm/*.h /build/xen/dist/install/usr/local/include/xen/arch-riscv/hvm
+/build/xen/tools/include/../../tools/cross-install -m0644 -p xen/foreign/*.h /build/xen/dist/install/usr/local/include/xen/foreign
+/build/xen/tools/include/../../tools/cross-install -m0644 -p xen/hvm/*.h /build/xen/dist/install/usr/local/include/xen/hvm
+/build/xen/tools/include/../../tools/cross-install -m0644 -p xen/io/*.h /build/xen/dist/install/usr/local/include/xen/io
+/build/xen/tools/include/../../tools/cross-install -m0644 -p xen/sys/*.h /build/xen/dist/install/usr/local/include/xen/sys
+/build/xen/tools/include/../../tools/cross-install -m0644 -p xen/xsm/*.h /build/xen/dist/install/usr/local/include/xen/xsm
+/build/xen/tools/include/../../tools/cross-install -m0644 -p xen_list.h /build/xen/dist/install/usr/local/include
+make[2]: Leaving directory '/build/xen/tools/include'
+make -C tools install
+make[2]: Entering directory '/build/xen/tools'
+/build/xen/tools/../tools/cross-install -d -m0755 -p -m 700 /build/xen/dist/install/var/lib/xen/dump
+/build/xen/tools/../tools/cross-install -d -m0755 -p /build/xen/dist/install/var/log/xen
+/build/xen/tools/../tools/cross-install -d -m0755 -p /build/xen/dist/install/var/lib/xen
+/build/xen/tools/../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/lib/pkgconfig
+make subdirs-install
+make[3]: Entering directory '/build/xen/tools'
+make[4]: Entering directory '/build/xen/tools'
+make -C libs install
+make[5]: Entering directory '/build/xen/tools/libs'
+make[6]: Entering directory '/build/xen/tools/libs'
+make -C toolcore install
+make[7]: Entering directory '/build/xen/tools/libs/toolcore'
+{ \
+echo "prefix=/build/xen/tools/libs/toolcore/../../.."; \
+echo "includedir=/build/xen/tools/libs/toolcore/../../../tools/include"; \
+echo "libdir=/build/xen/tools/libs/toolcore"; \
+echo ""; \
+echo "Name: Xentoolcore"; \
+echo "Description: Central support for Xen Hypervisor userland libraries"; \
+echo "Version: 1.0"; \
+echo "Cflags: -I\${includedir}"; \
+echo "Libs: -L\${libdir}      -Wl,-rpath-link=/build/xen/tools/libs/toolcore/../../../tools/libs/toolcore -lxentoolcore"; \
+echo "Libs.private: "; \
+echo "Requires.private: "; \
+} > /build/xen/tools/pkg-config/xentoolcore.pc
+/build/xen/tools/libs/toolcore/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/lib
+/build/xen/tools/libs/toolcore/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/include
+/build/xen/tools/libs/toolcore/../../../tools/cross-install -m0755 -p libxentoolcore.so.1.0 /build/xen/dist/install/usr/local/lib
+/build/xen/tools/libs/toolcore/../../../tools/cross-install -m0644 -p libxentoolcore.a /build/xen/dist/install/usr/local/lib
+ln -sf libxentoolcore.so.1.0 /build/xen/dist/install/usr/local/lib/libxentoolcore.so.1
+ln -sf libxentoolcore.so.1 /build/xen/dist/install/usr/local/lib/libxentoolcore.so
+for i in  /build/xen/tools/libs/toolcore/../../../tools/include/xentoolcore.h; do /build/xen/tools/libs/toolcore/../../../tools/cross-install -m0644 -p $i /build/xen/dist/install/usr/local/include; done
+/build/xen/tools/libs/toolcore/../../../tools/cross-install -m0644 -p xentoolcore.pc /build/xen/dist/install/usr/local/lib/pkgconfig
+make[7]: Leaving directory '/build/xen/tools/libs/toolcore'
+make[6]: Leaving directory '/build/xen/tools/libs'
+make[6]: Entering directory '/build/xen/tools/libs'
+make -C toollog install
+make[7]: Entering directory '/build/xen/tools/libs/toollog'
+{ \
+echo "prefix=/build/xen/tools/libs/toollog/../../.."; \
+echo "includedir=/build/xen/tools/libs/toollog/../../../tools/include"; \
+echo "libdir=/build/xen/tools/libs/toollog"; \
+echo ""; \
+echo "Name: Xentoollog"; \
+echo "Description: The Xentoollog library for Xen hypervisor"; \
+echo "Version: 1.0"; \
+echo "Cflags: -I\${includedir}"; \
+echo "Libs: -L\${libdir}      -Wl,-rpath-link=/build/xen/tools/libs/toollog/../../../tools/libs/toollog -lxentoollog"; \
+echo "Libs.private: "; \
+echo "Requires.private: "; \
+} > /build/xen/tools/pkg-config/xentoollog.pc
+/build/xen/tools/libs/toollog/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/lib
+/build/xen/tools/libs/toollog/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/include
+/build/xen/tools/libs/toollog/../../../tools/cross-install -m0755 -p libxentoollog.so.1.0 /build/xen/dist/install/usr/local/lib
+/build/xen/tools/libs/toollog/../../../tools/cross-install -m0644 -p libxentoollog.a /build/xen/dist/install/usr/local/lib
+ln -sf libxentoollog.so.1.0 /build/xen/dist/install/usr/local/lib/libxentoollog.so.1
+ln -sf libxentoollog.so.1 /build/xen/dist/install/usr/local/lib/libxentoollog.so
+for i in  /build/xen/tools/libs/toollog/../../../tools/include/xentoollog.h; do /build/xen/tools/libs/toollog/../../../tools/cross-install -m0644 -p $i /build/xen/dist/install/usr/local/include; done
+/build/xen/tools/libs/toollog/../../../tools/cross-install -m0644 -p xentoollog.pc /build/xen/dist/install/usr/local/lib/pkgconfig
+make[7]: Leaving directory '/build/xen/tools/libs/toollog'
+make[6]: Leaving directory '/build/xen/tools/libs'
+make[6]: Entering directory '/build/xen/tools/libs'
+make -C evtchn install
+make[7]: Entering directory '/build/xen/tools/libs/evtchn'
+{ \
+echo "prefix=/build/xen/tools/libs/evtchn/../../.."; \
+echo "includedir=/build/xen/tools/libs/evtchn/../../../tools/include"; \
+echo "libdir=/build/xen/tools/libs/evtchn"; \
+echo ""; \
+echo "Name: Xenevtchn"; \
+echo "Description: The Xenevtchn library for Xen hypervisor"; \
+echo "Version: 1.2"; \
+echo "Cflags: -I\${includedir}"; \
+echo "Libs: -L\${libdir}     -Wl,-rpath-link=/build/xen/tools/libs/evtchn/../../../tools/libs/toolcore -Wl,-rpath-link=/build/xen/tools/libs/evtchn/../../../tools/libs/toollog -Wl,-rpath-link=/build/xen/tools/libs/evtchn/../../../tools/libs/evtchn -lxenevtchn"; \
+echo "Libs.private: "; \
+echo "Requires.private: xentoollog,xentoolcore"; \
+} > /build/xen/tools/pkg-config/xenevtchn.pc
+/build/xen/tools/libs/evtchn/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/lib
+/build/xen/tools/libs/evtchn/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/include
+/build/xen/tools/libs/evtchn/../../../tools/cross-install -m0755 -p libxenevtchn.so.1.2 /build/xen/dist/install/usr/local/lib
+/build/xen/tools/libs/evtchn/../../../tools/cross-install -m0644 -p libxenevtchn.a /build/xen/dist/install/usr/local/lib
+ln -sf libxenevtchn.so.1.2 /build/xen/dist/install/usr/local/lib/libxenevtchn.so.1
+ln -sf libxenevtchn.so.1 /build/xen/dist/install/usr/local/lib/libxenevtchn.so
+for i in  /build/xen/tools/libs/evtchn/../../../tools/include/xenevtchn.h; do /build/xen/tools/libs/evtchn/../../../tools/cross-install -m0644 -p $i /build/xen/dist/install/usr/local/include; done
+/build/xen/tools/libs/evtchn/../../../tools/cross-install -m0644 -p xenevtchn.pc /build/xen/dist/install/usr/local/lib/pkgconfig
+make[7]: Leaving directory '/build/xen/tools/libs/evtchn'
+make[6]: Leaving directory '/build/xen/tools/libs'
+make[6]: Entering directory '/build/xen/tools/libs'
+make -C gnttab install
+make[7]: Entering directory '/build/xen/tools/libs/gnttab'
+{ \
+echo "prefix=/build/xen/tools/libs/gnttab/../../.."; \
+echo "includedir=/build/xen/tools/libs/gnttab/../../../tools/include"; \
+echo "libdir=/build/xen/tools/libs/gnttab"; \
+echo ""; \
+echo "Name: Xengnttab"; \
+echo "Description: The Xengnttab library for Xen hypervisor"; \
+echo "Version: 1.2"; \
+echo "Cflags: -I\${includedir}"; \
+echo "Libs: -L\${libdir}     -Wl,-rpath-link=/build/xen/tools/libs/gnttab/../../../tools/libs/toolcore -Wl,-rpath-link=/build/xen/tools/libs/gnttab/../../../tools/libs/toollog -Wl,-rpath-link=/build/xen/tools/libs/gnttab/../../../tools/libs/gnttab -lxengnttab"; \
+echo "Libs.private: "; \
+echo "Requires.private: xentoollog,xentoolcore"; \
+} > /build/xen/tools/pkg-config/xengnttab.pc
+/build/xen/tools/libs/gnttab/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/lib
+/build/xen/tools/libs/gnttab/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/include
+/build/xen/tools/libs/gnttab/../../../tools/cross-install -m0755 -p libxengnttab.so.1.2 /build/xen/dist/install/usr/local/lib
+/build/xen/tools/libs/gnttab/../../../tools/cross-install -m0644 -p libxengnttab.a /build/xen/dist/install/usr/local/lib
+ln -sf libxengnttab.so.1.2 /build/xen/dist/install/usr/local/lib/libxengnttab.so.1
+ln -sf libxengnttab.so.1 /build/xen/dist/install/usr/local/lib/libxengnttab.so
+for i in  /build/xen/tools/libs/gnttab/../../../tools/include/xengnttab.h; do /build/xen/tools/libs/gnttab/../../../tools/cross-install -m0644 -p $i /build/xen/dist/install/usr/local/include; done
+/build/xen/tools/libs/gnttab/../../../tools/cross-install -m0644 -p xengnttab.pc /build/xen/dist/install/usr/local/lib/pkgconfig
+make[7]: Leaving directory '/build/xen/tools/libs/gnttab'
+make[6]: Leaving directory '/build/xen/tools/libs'
+make[6]: Entering directory '/build/xen/tools/libs'
+make -C call install
+make[7]: Entering directory '/build/xen/tools/libs/call'
+{ \
+echo "prefix=/build/xen/tools/libs/call/../../.."; \
+echo "includedir=/build/xen/tools/libs/call/../../../tools/include"; \
+echo "libdir=/build/xen/tools/libs/call"; \
+echo ""; \
+echo "Name: Xencall"; \
+echo "Description: The Xencall library for Xen hypervisor"; \
+echo "Version: 1.3"; \
+echo "Cflags: -I\${includedir}"; \
+echo "Libs: -L\${libdir}     -Wl,-rpath-link=/build/xen/tools/libs/call/../../../tools/libs/toolcore -Wl,-rpath-link=/build/xen/tools/libs/call/../../../tools/libs/toollog -Wl,-rpath-link=/build/xen/tools/libs/call/../../../tools/libs/call -lxencall"; \
+echo "Libs.private: "; \
+echo "Requires.private: xentoollog,xentoolcore"; \
+} > /build/xen/tools/pkg-config/xencall.pc
+/build/xen/tools/libs/call/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/lib
+/build/xen/tools/libs/call/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/include
+/build/xen/tools/libs/call/../../../tools/cross-install -m0755 -p libxencall.so.1.3 /build/xen/dist/install/usr/local/lib
+/build/xen/tools/libs/call/../../../tools/cross-install -m0644 -p libxencall.a /build/xen/dist/install/usr/local/lib
+ln -sf libxencall.so.1.3 /build/xen/dist/install/usr/local/lib/libxencall.so.1
+ln -sf libxencall.so.1 /build/xen/dist/install/usr/local/lib/libxencall.so
+for i in  /build/xen/tools/libs/call/../../../tools/include/xencall.h; do /build/xen/tools/libs/call/../../../tools/cross-install -m0644 -p $i /build/xen/dist/install/usr/local/include; done
+/build/xen/tools/libs/call/../../../tools/cross-install -m0644 -p xencall.pc /build/xen/dist/install/usr/local/lib/pkgconfig
+make[7]: Leaving directory '/build/xen/tools/libs/call'
+make[6]: Leaving directory '/build/xen/tools/libs'
+make[6]: Entering directory '/build/xen/tools/libs'
+make -C foreignmemory install
+make[7]: Entering directory '/build/xen/tools/libs/foreignmemory'
+{ \
+echo "prefix=/build/xen/tools/libs/foreignmemory/../../.."; \
+echo "includedir=/build/xen/tools/libs/foreignmemory/../../../tools/include"; \
+echo "libdir=/build/xen/tools/libs/foreignmemory"; \
+echo ""; \
+echo "Name: Xenforeignmemory"; \
+echo "Description: The Xenforeignmemory library for Xen hypervisor"; \
+echo "Version: 1.4"; \
+echo "Cflags: -I\${includedir}"; \
+echo "Libs: -L\${libdir}     -Wl,-rpath-link=/build/xen/tools/libs/foreignmemory/../../../tools/libs/toolcore -Wl,-rpath-link=/build/xen/tools/libs/foreignmemory/../../../tools/libs/toollog -Wl,-rpath-link=/build/xen/tools/libs/foreignmemory/../../../tools/libs/foreignmemory -lxenforeignmemory"; \
+echo "Libs.private: "; \
+echo "Requires.private: xentoollog,xentoolcore"; \
+} > /build/xen/tools/pkg-config/xenforeignmemory.pc
+/build/xen/tools/libs/foreignmemory/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/lib
+/build/xen/tools/libs/foreignmemory/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/include
+/build/xen/tools/libs/foreignmemory/../../../tools/cross-install -m0755 -p libxenforeignmemory.so.1.4 /build/xen/dist/install/usr/local/lib
+/build/xen/tools/libs/foreignmemory/../../../tools/cross-install -m0644 -p libxenforeignmemory.a /build/xen/dist/install/usr/local/lib
+ln -sf libxenforeignmemory.so.1.4 /build/xen/dist/install/usr/local/lib/libxenforeignmemory.so.1
+ln -sf libxenforeignmemory.so.1 /build/xen/dist/install/usr/local/lib/libxenforeignmemory.so
+for i in  /build/xen/tools/libs/foreignmemory/../../../tools/include/xenforeignmemory.h; do /build/xen/tools/libs/foreignmemory/../../../tools/cross-install -m0644 -p $i /build/xen/dist/install/usr/local/include; done
+/build/xen/tools/libs/foreignmemory/../../../tools/cross-install -m0644 -p xenforeignmemory.pc /build/xen/dist/install/usr/local/lib/pkgconfig
+make[7]: Leaving directory '/build/xen/tools/libs/foreignmemory'
+make[6]: Leaving directory '/build/xen/tools/libs'
+make[6]: Entering directory '/build/xen/tools/libs'
+make -C devicemodel install
+make[7]: Entering directory '/build/xen/tools/libs/devicemodel'
+{ \
+echo "prefix=/build/xen/tools/libs/devicemodel/../../.."; \
+echo "includedir=/build/xen/tools/libs/devicemodel/../../../tools/include"; \
+echo "libdir=/build/xen/tools/libs/devicemodel"; \
+echo ""; \
+echo "Name: Xendevicemodel"; \
+echo "Description: The Xendevicemodel library for Xen hypervisor"; \
+echo "Version: 1.4"; \
+echo "Cflags: -I\${includedir}"; \
+echo "Libs: -L\${libdir}     -Wl,-rpath-link=/build/xen/tools/libs/devicemodel/../../../tools/libs/call -Wl,-rpath-link=/build/xen/tools/libs/devicemodel/../../../tools/libs/toolcore -Wl,-rpath-link=/build/xen/tools/libs/devicemodel/../../../tools/libs/toollog -Wl,-rpath-link=/build/xen/tools/libs/devicemodel/../../../tools/libs/devicemodel -lxendevicemodel"; \
+echo "Libs.private: "; \
+echo "Requires.private: xentoollog,xentoolcore,xencall"; \
+} > /build/xen/tools/pkg-config/xendevicemodel.pc
+/build/xen/tools/libs/devicemodel/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/lib
+/build/xen/tools/libs/devicemodel/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/include
+/build/xen/tools/libs/devicemodel/../../../tools/cross-install -m0755 -p libxendevicemodel.so.1.4 /build/xen/dist/install/usr/local/lib
+/build/xen/tools/libs/devicemodel/../../../tools/cross-install -m0644 -p libxendevicemodel.a /build/xen/dist/install/usr/local/lib
+ln -sf libxendevicemodel.so.1.4 /build/xen/dist/install/usr/local/lib/libxendevicemodel.so.1
+ln -sf libxendevicemodel.so.1 /build/xen/dist/install/usr/local/lib/libxendevicemodel.so
+for i in  /build/xen/tools/libs/devicemodel/../../../tools/include/xendevicemodel.h; do /build/xen/tools/libs/devicemodel/../../../tools/cross-install -m0644 -p $i /build/xen/dist/install/usr/local/include; done
+/build/xen/tools/libs/devicemodel/../../../tools/cross-install -m0644 -p xendevicemodel.pc /build/xen/dist/install/usr/local/lib/pkgconfig
+make[7]: Leaving directory '/build/xen/tools/libs/devicemodel'
+make[6]: Leaving directory '/build/xen/tools/libs'
+make[6]: Entering directory '/build/xen/tools/libs'
+make -C ctrl install
+make[7]: Entering directory '/build/xen/tools/libs/ctrl'
+sed "s!\(^\| \)$PWD/! !" .no_xc_pagetab.o.d >.no_xc_pagetab.o.d2.tmp && mv -f .no_xc_pagetab.o.d2.tmp .no_xc_pagetab.o.d2
+sed "s!\(^\| \)$PWD/! !" .no_xc_pagetab.opic.d >.no_xc_pagetab.opic.d2.tmp && mv -f .no_xc_pagetab.opic.d2.tmp .no_xc_pagetab.opic.d2
+sed "s!\(^\| \)$PWD/! !" .xc_altp2m.o.d >.xc_altp2m.o.d2.tmp && mv -f .xc_altp2m.o.d2.tmp .xc_altp2m.o.d2
+sed "s!\(^\| \)$PWD/! !" .xc_altp2m.opic.d >.xc_altp2m.opic.d2.tmp && mv -f .xc_altp2m.opic.d2.tmp .xc_altp2m.opic.d2
+sed "s!\(^\| \)$PWD/! !" .xc_arinc653.o.d >.xc_arinc653.o.d2.tmp && mv -f .xc_arinc653.o.d2.tmp .xc_arinc653.o.d2
+sed "s!\(^\| \)$PWD/! !" .xc_arinc653.opic.d >.xc_arinc653.opic.d2.tmp && mv -f .xc_arinc653.opic.d2.tmp .xc_arinc653.opic.d2
+sed "s!\(^\| \)$PWD/! !" .xc_cpu_hotplug.o.d >.xc_cpu_hotplug.o.d2.tmp && mv -f .xc_cpu_hotplug.o.d2.tmp .xc_cpu_hotplug.o.d2
+sed "s!\(^\| \)$PWD/! !" .xc_cpu_hotplug.opic.d >.xc_cpu_hotplug.opic.d2.tmp && mv -f .xc_cpu_hotplug.opic.d2.tmp .xc_cpu_hotplug.opic.d2
+sed "s!\(^\| \)$PWD/! !" .xc_cpupool.o.d >.xc_cpupool.o.d2.tmp && mv -f .xc_cpupool.o.d2.tmp .xc_cpupool.o.d2
+sed "s!\(^\| \)$PWD/! !" .xc_cpupool.opic.d >.xc_cpupool.opic.d2.tmp && mv -f .xc_cpupool.opic.d2.tmp .xc_cpupool.opic.d2
+sed "s!\(^\| \)$PWD/! !" .xc_csched.o.d >.xc_csched.o.d2.tmp && mv -f .xc_csched.o.d2.tmp .xc_csched.o.d2
+sed "s!\(^\| \)$PWD/! !" .xc_csched.opic.d >.xc_csched.opic.d2.tmp && mv -f .xc_csched.opic.d2.tmp .xc_csched.opic.d2
+sed "s!\(^\| \)$PWD/! !" .xc_csched2.o.d >.xc_csched2.o.d2.tmp && mv -f .xc_csched2.o.d2.tmp .xc_csched2.o.d2
+sed "s!\(^\| \)$PWD/! !" .xc_csched2.opic.d >.xc_csched2.opic.d2.tmp && mv -f .xc_csched2.opic.d2.tmp .xc_csched2.opic.d2
+sed "s!\(^\| \)$PWD/! !" .xc_devicemodel_compat.o.d >.xc_devicemodel_compat.o.d2.tmp && mv -f .xc_devicemodel_compat.o.d2.tmp .xc_devicemodel_compat.o.d2
+sed "s!\(^\| \)$PWD/! !" .xc_devicemodel_compat.opic.d >.xc_devicemodel_compat.opic.d2.tmp && mv -f .xc_devicemodel_compat.opic.d2.tmp .xc_devicemodel_compat.opic.d2
+sed "s!\(^\| \)$PWD/! !" .xc_domain.o.d >.xc_domain.o.d2.tmp && mv -f .xc_domain.o.d2.tmp .xc_domain.o.d2
+sed "s!\(^\| \)$PWD/! !" .xc_domain.opic.d >.xc_domain.opic.d2.tmp && mv -f .xc_domain.opic.d2.tmp .xc_domain.opic.d2
+sed "s!\(^\| \)$PWD/! !" .xc_evtchn.o.d >.xc_evtchn.o.d2.tmp && mv -f .xc_evtchn.o.d2.tmp .xc_evtchn.o.d2
+sed "s!\(^\| \)$PWD/! !" .xc_evtchn.opic.d >.xc_evtchn.opic.d2.tmp && mv -f .xc_evtchn.opic.d2.tmp .xc_evtchn.opic.d2
+sed "s!\(^\| \)$PWD/! !" .xc_evtchn_compat.o.d >.xc_evtchn_compat.o.d2.tmp && mv -f .xc_evtchn_compat.o.d2.tmp .xc_evtchn_compat.o.d2
+sed "s!\(^\| \)$PWD/! !" .xc_evtchn_compat.opic.d >.xc_evtchn_compat.opic.d2.tmp && mv -f .xc_evtchn_compat.opic.d2.tmp .xc_evtchn_compat.opic.d2
+sed "s!\(^\| \)$PWD/! !" .xc_flask.o.d >.xc_flask.o.d2.tmp && mv -f .xc_flask.o.d2.tmp .xc_flask.o.d2
+sed "s!\(^\| \)$PWD/! !" .xc_flask.opic.d >.xc_flask.opic.d2.tmp && mv -f .xc_flask.opic.d2.tmp .xc_flask.opic.d2
+sed "s!\(^\| \)$PWD/! !" .xc_foreign_memory.o.d >.xc_foreign_memory.o.d2.tmp && mv -f .xc_foreign_memory.o.d2.tmp .xc_foreign_memory.o.d2
+sed "s!\(^\| \)$PWD/! !" .xc_foreign_memory.opic.d >.xc_foreign_memory.opic.d2.tmp && mv -f .xc_foreign_memory.opic.d2.tmp .xc_foreign_memory.opic.d2
+sed "s!\(^\| \)$PWD/! !" .xc_gnttab.o.d >.xc_gnttab.o.d2.tmp && mv -f .xc_gnttab.o.d2.tmp .xc_gnttab.o.d2
+sed "s!\(^\| \)$PWD/! !" .xc_gnttab.opic.d >.xc_gnttab.opic.d2.tmp && mv -f .xc_gnttab.opic.d2.tmp .xc_gnttab.opic.d2
+sed "s!\(^\| \)$PWD/! !" .xc_gnttab_compat.o.d >.xc_gnttab_compat.o.d2.tmp && mv -f .xc_gnttab_compat.o.d2.tmp .xc_gnttab_compat.o.d2
+sed "s!\(^\| \)$PWD/! !" .xc_gnttab_compat.opic.d >.xc_gnttab_compat.opic.d2.tmp && mv -f .xc_gnttab_compat.opic.d2.tmp .xc_gnttab_compat.opic.d2
+sed "s!\(^\| \)$PWD/! !" .xc_hcall_buf.o.d >.xc_hcall_buf.o.d2.tmp && mv -f .xc_hcall_buf.o.d2.tmp .xc_hcall_buf.o.d2
+sed "s!\(^\| \)$PWD/! !" .xc_hcall_buf.opic.d >.xc_hcall_buf.opic.d2.tmp && mv -f .xc_hcall_buf.opic.d2.tmp .xc_hcall_buf.opic.d2
+sed "s!\(^\| \)$PWD/! !" .xc_kexec.o.d >.xc_kexec.o.d2.tmp && mv -f .xc_kexec.o.d2.tmp .xc_kexec.o.d2
+sed "s!\(^\| \)$PWD/! !" .xc_kexec.opic.d >.xc_kexec.opic.d2.tmp && mv -f .xc_kexec.opic.d2.tmp .xc_kexec.opic.d2
+sed "s!\(^\| \)$PWD/! !" .xc_linux.o.d >.xc_linux.o.d2.tmp && mv -f .xc_linux.o.d2.tmp .xc_linux.o.d2
+sed "s!\(^\| \)$PWD/! !" .xc_linux.opic.d >.xc_linux.opic.d2.tmp && mv -f .xc_linux.opic.d2.tmp .xc_linux.opic.d2
+sed "s!\(^\| \)$PWD/! !" .xc_mem_access.o.d >.xc_mem_access.o.d2.tmp && mv -f .xc_mem_access.o.d2.tmp .xc_mem_access.o.d2
+sed "s!\(^\| \)$PWD/! !" .xc_mem_access.opic.d >.xc_mem_access.opic.d2.tmp && mv -f .xc_mem_access.opic.d2.tmp .xc_mem_access.opic.d2
+sed "s!\(^\| \)$PWD/! !" .xc_mem_paging.o.d >.xc_mem_paging.o.d2.tmp && mv -f .xc_mem_paging.o.d2.tmp .xc_mem_paging.o.d2
+sed "s!\(^\| \)$PWD/! !" .xc_mem_paging.opic.d >.xc_mem_paging.opic.d2.tmp && mv -f .xc_mem_paging.opic.d2.tmp .xc_mem_paging.opic.d2
+sed "s!\(^\| \)$PWD/! !" .xc_memshr.o.d >.xc_memshr.o.d2.tmp && mv -f .xc_memshr.o.d2.tmp .xc_memshr.o.d2
+sed "s!\(^\| \)$PWD/! !" .xc_memshr.opic.d >.xc_memshr.opic.d2.tmp && mv -f .xc_memshr.opic.d2.tmp .xc_memshr.opic.d2
+sed "s!\(^\| \)$PWD/! !" .xc_misc.o.d >.xc_misc.o.d2.tmp && mv -f .xc_misc.o.d2.tmp .xc_misc.o.d2
+sed "s!\(^\| \)$PWD/! !" .xc_misc.opic.d >.xc_misc.opic.d2.tmp && mv -f .xc_misc.opic.d2.tmp .xc_misc.opic.d2
+sed "s!\(^\| \)$PWD/! !" .xc_monitor.o.d >.xc_monitor.o.d2.tmp && mv -f .xc_monitor.o.d2.tmp .xc_monitor.o.d2
+sed "s!\(^\| \)$PWD/! !" .xc_monitor.opic.d >.xc_monitor.opic.d2.tmp && mv -f .xc_monitor.opic.d2.tmp .xc_monitor.opic.d2
+sed "s!\(^\| \)$PWD/! !" .xc_physdev.o.d >.xc_physdev.o.d2.tmp && mv -f .xc_physdev.o.d2.tmp .xc_physdev.o.d2
+sed "s!\(^\| \)$PWD/! !" .xc_physdev.opic.d >.xc_physdev.opic.d2.tmp && mv -f .xc_physdev.opic.d2.tmp .xc_physdev.opic.d2
+sed "s!\(^\| \)$PWD/! !" .xc_pm.o.d >.xc_pm.o.d2.tmp && mv -f .xc_pm.o.d2.tmp .xc_pm.o.d2
+sed "s!\(^\| \)$PWD/! !" .xc_pm.opic.d >.xc_pm.opic.d2.tmp && mv -f .xc_pm.opic.d2.tmp .xc_pm.opic.d2
+sed "s!\(^\| \)$PWD/! !" .xc_private.o.d >.xc_private.o.d2.tmp && mv -f .xc_private.o.d2.tmp .xc_private.o.d2
+sed "s!\(^\| \)$PWD/! !" .xc_private.opic.d >.xc_private.opic.d2.tmp && mv -f .xc_private.opic.d2.tmp .xc_private.opic.d2
+sed "s!\(^\| \)$PWD/! !" .xc_resource.o.d >.xc_resource.o.d2.tmp && mv -f .xc_resource.o.d2.tmp .xc_resource.o.d2
+sed "s!\(^\| \)$PWD/! !" .xc_resource.opic.d >.xc_resource.opic.d2.tmp && mv -f .xc_resource.opic.d2.tmp .xc_resource.opic.d2
+sed "s!\(^\| \)$PWD/! !" .xc_rt.o.d >.xc_rt.o.d2.tmp && mv -f .xc_rt.o.d2.tmp .xc_rt.o.d2
+sed "s!\(^\| \)$PWD/! !" .xc_rt.opic.d >.xc_rt.opic.d2.tmp && mv -f .xc_rt.opic.d2.tmp .xc_rt.opic.d2
+sed "s!\(^\| \)$PWD/! !" .xc_tbuf.o.d >.xc_tbuf.o.d2.tmp && mv -f .xc_tbuf.o.d2.tmp .xc_tbuf.o.d2
+sed "s!\(^\| \)$PWD/! !" .xc_tbuf.opic.d >.xc_tbuf.opic.d2.tmp && mv -f .xc_tbuf.opic.d2.tmp .xc_tbuf.opic.d2
+sed "s!\(^\| \)$PWD/! !" .xc_vm_event.o.d >.xc_vm_event.o.d2.tmp && mv -f .xc_vm_event.o.d2.tmp .xc_vm_event.o.d2
+sed "s!\(^\| \)$PWD/! !" .xc_vm_event.opic.d >.xc_vm_event.opic.d2.tmp && mv -f .xc_vm_event.opic.d2.tmp .xc_vm_event.opic.d2
+sed "s!\(^\| \)$PWD/! !" .xc_vmtrace.o.d >.xc_vmtrace.o.d2.tmp && mv -f .xc_vmtrace.o.d2.tmp .xc_vmtrace.o.d2
+sed "s!\(^\| \)$PWD/! !" .xc_vmtrace.opic.d >.xc_vmtrace.opic.d2.tmp && mv -f .xc_vmtrace.opic.d2.tmp .xc_vmtrace.opic.d2
+echo 'libxenctrl_4.18.0 { global: *; };' >./.libxenctrl.map.tmp
+{ \
+echo "prefix=/build/xen/tools/libs/ctrl/../../.."; \
+echo "includedir=/build/xen/tools/libs/ctrl/../../../tools/include"; \
+echo "libdir=/build/xen/tools/libs/ctrl"; \
+echo ""; \
+echo "Name: Xencontrol"; \
+echo "Description: The Xencontrol library for Xen hypervisor"; \
+echo "Version: 4.18.0"; \
+echo "Cflags: -I\${includedir}"; \
+echo "Libs: -L\${libdir}     -Wl,-rpath-link=/build/xen/tools/libs/ctrl/../../../tools/libs/call -Wl,-rpath-link=/build/xen/tools/libs/ctrl/../../../tools/libs/devicemodel -Wl,-rpath-link=/build/xen/tools/libs/ctrl/../../../tools/libs/evtchn -Wl,-rpath-link=/build/xen/tools/libs/ctrl/../../../tools/libs/foreignmemory -Wl,-rpath-link=/build/xen/tools/libs/ctrl/../../../tools/libs/gnttab -Wl,-rpath-link=/build/xen/tools/libs/ctrl/../../../tools/libs/toolcore -Wl,-rpath-link=/build/xen/tools/libs/ctrl/../../../tools/libs/toollog -Wl,-rpath-link=/build/xen/tools/libs/ctrl/../../../tools/libs/ctrl -lxenctrl"; \
+echo "Libs.private: "; \
+echo "Requires.private: xentoollog,xencall,xenevtchn,xengnttab,xenforeignmemory,xendevicemodel"; \
+} > /build/xen/tools/pkg-config/xencontrol.pc
+if ! cmp -s ./.libxenctrl.map.tmp libxenctrl.map.tmp; then mv -f ./.libxenctrl.map.tmp libxenctrl.map.tmp; else rm -f ./.libxenctrl.map.tmp; fi
+/build/xen/tools/libs/ctrl/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/lib
+/build/xen/tools/libs/ctrl/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/include
+/build/xen/tools/libs/ctrl/../../../tools/cross-install -m0755 -p libxenctrl.so.4.18.0 /build/xen/dist/install/usr/local/lib
+/build/xen/tools/libs/ctrl/../../../tools/cross-install -m0644 -p libxenctrl.a /build/xen/dist/install/usr/local/lib
+ln -sf libxenctrl.so.4.18.0 /build/xen/dist/install/usr/local/lib/libxenctrl.so.4.18
+ln -sf libxenctrl.so.4.18 /build/xen/dist/install/usr/local/lib/libxenctrl.so
+for i in  /build/xen/tools/libs/ctrl/../../../tools/include/xenctrl.h  /build/xen/tools/libs/ctrl/../../../tools/include/xenctrl_compat.h; do /build/xen/tools/libs/ctrl/../../../tools/cross-install -m0644 -p $i /build/xen/dist/install/usr/local/include; done
+/build/xen/tools/libs/ctrl/../../../tools/cross-install -m0644 -p xencontrol.pc /build/xen/dist/install/usr/local/lib/pkgconfig
+make[7]: Leaving directory '/build/xen/tools/libs/ctrl'
+make[6]: Leaving directory '/build/xen/tools/libs'
+make[6]: Entering directory '/build/xen/tools/libs'
+make -C guest install
+make[7]: Entering directory '/build/xen/tools/libs/guest'
+sed "s!\(^\| \)$PWD/! !" .libelf-dominfo.o.d >.libelf-dominfo.o.d2.tmp && mv -f .libelf-dominfo.o.d2.tmp .libelf-dominfo.o.d2
+sed "s!\(^\| \)$PWD/! !" .libelf-dominfo.opic.d >.libelf-dominfo.opic.d2.tmp && mv -f .libelf-dominfo.opic.d2.tmp .libelf-dominfo.opic.d2
+sed "s!\(^\| \)$PWD/! !" .libelf-loader.o.d >.libelf-loader.o.d2.tmp && mv -f .libelf-loader.o.d2.tmp .libelf-loader.o.d2
+sed "s!\(^\| \)$PWD/! !" .libelf-loader.opic.d >.libelf-loader.opic.d2.tmp && mv -f .libelf-loader.opic.d2.tmp .libelf-loader.opic.d2
+sed "s!\(^\| \)$PWD/! !" .libelf-tools.o.d >.libelf-tools.o.d2.tmp && mv -f .libelf-tools.o.d2.tmp .libelf-tools.o.d2
+sed "s!\(^\| \)$PWD/! !" .libelf-tools.opic.d >.libelf-tools.opic.d2.tmp && mv -f .libelf-tools.opic.d2.tmp .libelf-tools.opic.d2
+sed "s!\(^\| \)$PWD/! !" .xg_core.o.d >.xg_core.o.d2.tmp && mv -f .xg_core.o.d2.tmp .xg_core.o.d2
+sed "s!\(^\| \)$PWD/! !" .xg_core.opic.d >.xg_core.opic.d2.tmp && mv -f .xg_core.opic.d2.tmp .xg_core.opic.d2
+sed "s!\(^\| \)$PWD/! !" .xg_core_riscv.o.d >.xg_core_riscv.o.d2.tmp && mv -f .xg_core_riscv.o.d2.tmp .xg_core_riscv.o.d2
+sed "s!\(^\| \)$PWD/! !" .xg_core_riscv.opic.d >.xg_core_riscv.opic.d2.tmp && mv -f .xg_core_riscv.opic.d2.tmp .xg_core_riscv.opic.d2
+sed "s!\(^\| \)$PWD/! !" .xg_dom_binloader.o.d >.xg_dom_binloader.o.d2.tmp && mv -f .xg_dom_binloader.o.d2.tmp .xg_dom_binloader.o.d2
+sed "s!\(^\| \)$PWD/! !" .xg_dom_binloader.opic.d >.xg_dom_binloader.opic.d2.tmp && mv -f .xg_dom_binloader.opic.d2.tmp .xg_dom_binloader.opic.d2
+sed "s!\(^\| \)$PWD/! !" .xg_dom_boot.o.d >.xg_dom_boot.o.d2.tmp && mv -f .xg_dom_boot.o.d2.tmp .xg_dom_boot.o.d2
+sed "s!\(^\| \)$PWD/! !" .xg_dom_boot.opic.d >.xg_dom_boot.opic.d2.tmp && mv -f .xg_dom_boot.opic.d2.tmp .xg_dom_boot.opic.d2
+sed "s!\(^\| \)$PWD/! !" .xg_dom_compat_linux.o.d >.xg_dom_compat_linux.o.d2.tmp && mv -f .xg_dom_compat_linux.o.d2.tmp .xg_dom_compat_linux.o.d2
+sed "s!\(^\| \)$PWD/! !" .xg_dom_compat_linux.opic.d >.xg_dom_compat_linux.opic.d2.tmp && mv -f .xg_dom_compat_linux.opic.d2.tmp .xg_dom_compat_linux.opic.d2
+sed "s!\(^\| \)$PWD/! !" .xg_dom_core.o.d >.xg_dom_core.o.d2.tmp && mv -f .xg_dom_core.o.d2.tmp .xg_dom_core.o.d2
+sed "s!\(^\| \)$PWD/! !" .xg_dom_core.opic.d >.xg_dom_core.opic.d2.tmp && mv -f .xg_dom_core.opic.d2.tmp .xg_dom_core.opic.d2
+sed "s!\(^\| \)$PWD/! !" .xg_dom_elfloader.o.d >.xg_dom_elfloader.o.d2.tmp && mv -f .xg_dom_elfloader.o.d2.tmp .xg_dom_elfloader.o.d2
+sed "s!\(^\| \)$PWD/! !" .xg_dom_elfloader.opic.d >.xg_dom_elfloader.opic.d2.tmp && mv -f .xg_dom_elfloader.opic.d2.tmp .xg_dom_elfloader.opic.d2
+sed "s!\(^\| \)$PWD/! !" .xg_dom_riscv.o.d >.xg_dom_riscv.o.d2.tmp && mv -f .xg_dom_riscv.o.d2.tmp .xg_dom_riscv.o.d2
+sed "s!\(^\| \)$PWD/! !" .xg_dom_riscv.opic.d >.xg_dom_riscv.opic.d2.tmp && mv -f .xg_dom_riscv.opic.d2.tmp .xg_dom_riscv.opic.d2
+sed "s!\(^\| \)$PWD/! !" .xg_dom_riscvzimageloader.o.d >.xg_dom_riscvzimageloader.o.d2.tmp && mv -f .xg_dom_riscvzimageloader.o.d2.tmp .xg_dom_riscvzimageloader.o.d2
+sed "s!\(^\| \)$PWD/! !" .xg_dom_riscvzimageloader.opic.d >.xg_dom_riscvzimageloader.opic.d2.tmp && mv -f .xg_dom_riscvzimageloader.opic.d2.tmp .xg_dom_riscvzimageloader.opic.d2
+sed "s!\(^\| \)$PWD/! !" .xg_domain.o.d >.xg_domain.o.d2.tmp && mv -f .xg_domain.o.d2.tmp .xg_domain.o.d2
+sed "s!\(^\| \)$PWD/! !" .xg_domain.opic.d >.xg_domain.opic.d2.tmp && mv -f .xg_domain.opic.d2.tmp .xg_domain.opic.d2
+sed "s!\(^\| \)$PWD/! !" .xg_nomigrate.o.d >.xg_nomigrate.o.d2.tmp && mv -f .xg_nomigrate.o.d2.tmp .xg_nomigrate.o.d2
+sed "s!\(^\| \)$PWD/! !" .xg_nomigrate.opic.d >.xg_nomigrate.opic.d2.tmp && mv -f .xg_nomigrate.opic.d2.tmp .xg_nomigrate.opic.d2
+sed "s!\(^\| \)$PWD/! !" .xg_private.o.d >.xg_private.o.d2.tmp && mv -f .xg_private.o.d2.tmp .xg_private.o.d2
+sed "s!\(^\| \)$PWD/! !" .xg_private.opic.d >.xg_private.opic.d2.tmp && mv -f .xg_private.opic.d2.tmp .xg_private.opic.d2
+sed "s!\(^\| \)$PWD/! !" .xg_resume.o.d >.xg_resume.o.d2.tmp && mv -f .xg_resume.o.d2.tmp .xg_resume.o.d2
+sed "s!\(^\| \)$PWD/! !" .xg_resume.opic.d >.xg_resume.opic.d2.tmp && mv -f .xg_resume.opic.d2.tmp .xg_resume.opic.d2
+sed "s!\(^\| \)$PWD/! !" .xg_suspend.o.d >.xg_suspend.o.d2.tmp && mv -f .xg_suspend.o.d2.tmp .xg_suspend.o.d2
+sed "s!\(^\| \)$PWD/! !" .xg_suspend.opic.d >.xg_suspend.opic.d2.tmp && mv -f .xg_suspend.opic.d2.tmp .xg_suspend.opic.d2
+echo 'libxenguest_4.18.0 { global: *; };' >./.libxenguest.map.tmp
+{ \
+echo "prefix=/build/xen/tools/libs/guest/../../.."; \
+echo "includedir=/build/xen/tools/libs/guest/../../../tools/include"; \
+echo "libdir=/build/xen/tools/libs/guest"; \
+echo ""; \
+echo "Name: Xenguest"; \
+echo "Description: The Xenguest library for Xen hypervisor"; \
+echo "Version: 4.18.0"; \
+echo "Cflags: -I\${includedir}"; \
+echo "Libs: -L\${libdir}     -Wl,-rpath-link=/build/xen/tools/libs/guest/../../../tools/libs/call -Wl,-rpath-link=/build/xen/tools/libs/guest/../../../tools/libs/ctrl -Wl,-rpath-link=/build/xen/tools/libs/guest/../../../tools/libs/devicemodel -Wl,-rpath-link=/build/xen/tools/libs/guest/../../../tools/libs/evtchn -Wl,-rpath-link=/build/xen/tools/libs/guest/../../../tools/libs/foreignmemory -Wl,-rpath-link=/build/xen/tools/libs/guest/../../../tools/libs/gnttab -Wl,-rpath-link=/build/xen/tools/libs/guest/../../../tools/libs/toolcore -Wl,-rpath-link=/build/xen/tools/libs/guest/../../../tools/libs/toollog -Wl,-rpath-link=/build/xen/tools/libs/guest/../../../tools/libs/guest -lxenguest"; \
+echo "Libs.private: "; \
+echo "Requires.private: xenevtchn,xencontrol"; \
+} > /build/xen/tools/pkg-config/xenguest.pc
+if ! cmp -s ./.libxenguest.map.tmp libxenguest.map.tmp; then mv -f ./.libxenguest.map.tmp libxenguest.map.tmp; else rm -f ./.libxenguest.map.tmp; fi
+/build/xen/tools/libs/guest/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/lib
+/build/xen/tools/libs/guest/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/include
+/build/xen/tools/libs/guest/../../../tools/cross-install -m0755 -p libxenguest.so.4.18.0 /build/xen/dist/install/usr/local/lib
+/build/xen/tools/libs/guest/../../../tools/cross-install -m0644 -p libxenguest.a /build/xen/dist/install/usr/local/lib
+ln -sf libxenguest.so.4.18.0 /build/xen/dist/install/usr/local/lib/libxenguest.so.4.18
+ln -sf libxenguest.so.4.18 /build/xen/dist/install/usr/local/lib/libxenguest.so
+for i in  /build/xen/tools/libs/guest/../../../tools/include/xenguest.h; do /build/xen/tools/libs/guest/../../../tools/cross-install -m0644 -p $i /build/xen/dist/install/usr/local/include; done
+/build/xen/tools/libs/guest/../../../tools/cross-install -m0644 -p xenguest.pc /build/xen/dist/install/usr/local/lib/pkgconfig
+make[7]: Leaving directory '/build/xen/tools/libs/guest'
+make[6]: Leaving directory '/build/xen/tools/libs'
+make[6]: Entering directory '/build/xen/tools/libs'
+make -C hypfs install
+make[7]: Entering directory '/build/xen/tools/libs/hypfs'
+{ \
+echo "prefix=/build/xen/tools/libs/hypfs/../../.."; \
+echo "includedir=/build/xen/tools/libs/hypfs/../../../tools/include"; \
+echo "libdir=/build/xen/tools/libs/hypfs"; \
+echo ""; \
+echo "Name: Xenhypfs"; \
+echo "Description: The Xenhypfs library for Xen hypervisor"; \
+echo "Version: 1.0"; \
+echo "Cflags: -I\${includedir}"; \
+echo "Libs: -L\${libdir}     -Wl,-rpath-link=/build/xen/tools/libs/hypfs/../../../tools/libs/call -Wl,-rpath-link=/build/xen/tools/libs/hypfs/../../../tools/libs/toolcore -Wl,-rpath-link=/build/xen/tools/libs/hypfs/../../../tools/libs/toollog -Wl,-rpath-link=/build/xen/tools/libs/hypfs/../../../tools/libs/hypfs -lxenhypfs"; \
+echo "Libs.private: "; \
+echo "Requires.private: xentoollog,xentoolcore,xencall"; \
+} > /build/xen/tools/pkg-config/xenhypfs.pc
+/build/xen/tools/libs/hypfs/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/lib
+/build/xen/tools/libs/hypfs/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/include
+/build/xen/tools/libs/hypfs/../../../tools/cross-install -m0755 -p libxenhypfs.so.1.0 /build/xen/dist/install/usr/local/lib
+/build/xen/tools/libs/hypfs/../../../tools/cross-install -m0644 -p libxenhypfs.a /build/xen/dist/install/usr/local/lib
+ln -sf libxenhypfs.so.1.0 /build/xen/dist/install/usr/local/lib/libxenhypfs.so.1
+ln -sf libxenhypfs.so.1 /build/xen/dist/install/usr/local/lib/libxenhypfs.so
+for i in  /build/xen/tools/libs/hypfs/../../../tools/include/xenhypfs.h; do /build/xen/tools/libs/hypfs/../../../tools/cross-install -m0644 -p $i /build/xen/dist/install/usr/local/include; done
+/build/xen/tools/libs/hypfs/../../../tools/cross-install -m0644 -p xenhypfs.pc /build/xen/dist/install/usr/local/lib/pkgconfig
+make[7]: Leaving directory '/build/xen/tools/libs/hypfs'
+make[6]: Leaving directory '/build/xen/tools/libs'
+make[6]: Entering directory '/build/xen/tools/libs'
+make -C store install
+make[7]: Entering directory '/build/xen/tools/libs/store'
+sed "s!\(^\| \)$PWD/! !" .xs.o.d >.xs.o.d2.tmp && mv -f .xs.o.d2.tmp .xs.o.d2
+sed "s!\(^\| \)$PWD/! !" .xs.opic.d >.xs.opic.d2.tmp && mv -f .xs.opic.d2.tmp .xs.opic.d2
+sed "s!\(^\| \)$PWD/! !" .xs_lib.o.d >.xs_lib.o.d2.tmp && mv -f .xs_lib.o.d2.tmp .xs_lib.o.d2
+sed "s!\(^\| \)$PWD/! !" .xs_lib.opic.d >.xs_lib.opic.d2.tmp && mv -f .xs_lib.opic.d2.tmp .xs_lib.opic.d2
+{ \
+echo "prefix=/build/xen/tools/libs/store/../../.."; \
+echo "includedir=/build/xen/tools/libs/store/../../../tools/include"; \
+echo "libdir=/build/xen/tools/libs/store"; \
+echo ""; \
+echo "Name: Xenstore"; \
+echo "Description: The Xenstore library for Xen hypervisor"; \
+echo "Version: 4.0"; \
+echo "Cflags: -I\${includedir}"; \
+echo "Libs: -L\${libdir}     -Wl,-rpath-link=/build/xen/tools/libs/store/../../../tools/libs/toolcore -Wl,-rpath-link=/build/xen/tools/libs/store/../../../tools/libs/store -lxenstore"; \
+echo "Libs.private: "; \
+echo "Requires.private: xentoolcore"; \
+} > /build/xen/tools/pkg-config/xenstore.pc
+/build/xen/tools/libs/store/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/lib
+/build/xen/tools/libs/store/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/include
+/build/xen/tools/libs/store/../../../tools/cross-install -m0755 -p libxenstore.so.4.0 /build/xen/dist/install/usr/local/lib
+/build/xen/tools/libs/store/../../../tools/cross-install -m0644 -p libxenstore.a /build/xen/dist/install/usr/local/lib
+ln -sf libxenstore.so.4.0 /build/xen/dist/install/usr/local/lib/libxenstore.so.4
+ln -sf libxenstore.so.4 /build/xen/dist/install/usr/local/lib/libxenstore.so
+for i in  /build/xen/tools/libs/store/../../../tools/include/xenstore.h  /build/xen/tools/libs/store/../../../tools/include/xenstore_lib.h; do /build/xen/tools/libs/store/../../../tools/cross-install -m0644 -p $i /build/xen/dist/install/usr/local/include; done
+/build/xen/tools/libs/store/../../../tools/cross-install -m0644 -p xenstore.pc /build/xen/dist/install/usr/local/lib/pkgconfig
+/build/xen/tools/libs/store/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/include
+/build/xen/tools/libs/store/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/include/xenstore-compat
+/build/xen/tools/libs/store/../../../tools/cross-install -m0644 -p /build/xen/tools/libs/store/../../../tools/include/xenstore-compat/xs.h /build/xen/dist/install/usr/local/include/xenstore-compat/xs.h
+/build/xen/tools/libs/store/../../../tools/cross-install -m0644 -p /build/xen/tools/libs/store/../../../tools/include/xenstore-compat/xs_lib.h /build/xen/dist/install/usr/local/include/xenstore-compat/xs_lib.h
+ln -sf xenstore-compat/xs.h  /build/xen/dist/install/usr/local/include/xs.h
+ln -sf xenstore-compat/xs_lib.h /build/xen/dist/install/usr/local/include/xs_lib.h
+make[7]: Leaving directory '/build/xen/tools/libs/store'
+make[6]: Leaving directory '/build/xen/tools/libs'
+make[6]: Entering directory '/build/xen/tools/libs'
+make -C stat install
+make[7]: Entering directory '/build/xen/tools/libs/stat'
+sed "s!\(^\| \)$PWD/! !" .xenstat.o.d >.xenstat.o.d2.tmp && mv -f .xenstat.o.d2.tmp .xenstat.o.d2
+sed "s!\(^\| \)$PWD/! !" .xenstat.opic.d >.xenstat.opic.d2.tmp && mv -f .xenstat.opic.d2.tmp .xenstat.opic.d2
+sed "s!\(^\| \)$PWD/! !" .xenstat_linux.o.d >.xenstat_linux.o.d2.tmp && mv -f .xenstat_linux.o.d2.tmp .xenstat_linux.o.d2
+sed "s!\(^\| \)$PWD/! !" .xenstat_linux.opic.d >.xenstat_linux.opic.d2.tmp && mv -f .xenstat_linux.opic.d2.tmp .xenstat_linux.opic.d2
+sed "s!\(^\| \)$PWD/! !" .xenstat_qmp.o.d >.xenstat_qmp.o.d2.tmp && mv -f .xenstat_qmp.o.d2.tmp .xenstat_qmp.o.d2
+sed "s!\(^\| \)$PWD/! !" .xenstat_qmp.opic.d >.xenstat_qmp.opic.d2.tmp && mv -f .xenstat_qmp.opic.d2.tmp .xenstat_qmp.opic.d2
+echo 'libxenstat_4.18.0 { global: *; };' >./.libxenstat.map.tmp
+{ \
+echo "prefix=/build/xen/tools/libs/stat/../../.."; \
+echo "includedir=/build/xen/tools/libs/stat/../../../tools/include"; \
+echo "libdir=/build/xen/tools/libs/stat"; \
+echo ""; \
+echo "Name: Xenstat"; \
+echo "Description: The Xenstat library for Xen hypervisor"; \
+echo "Version: 4.18.0"; \
+echo "Cflags: -I\${includedir}"; \
+echo "Libs: -L\${libdir}     -Wl,-rpath-link=/build/xen/tools/libs/stat/../../../tools/libs/call -Wl,-rpath-link=/build/xen/tools/libs/stat/../../../tools/libs/ctrl -Wl,-rpath-link=/build/xen/tools/libs/stat/../../../tools/libs/devicemodel -Wl,-rpath-link=/build/xen/tools/libs/stat/../../../tools/libs/evtchn -Wl,-rpath-link=/build/xen/tools/libs/stat/../../../tools/libs/foreignmemory -Wl,-rpath-link=/build/xen/tools/libs/stat/../../../tools/libs/gnttab -Wl,-rpath-link=/build/xen/tools/libs/stat/../../../tools/libs/store -Wl,-rpath-link=/build/xen/tools/libs/stat/../../../tools/libs/toolcore -Wl,-rpath-link=/build/xen/tools/libs/stat/../../../tools/libs/toollog -Wl,-rpath-link=/build/xen/tools/libs/stat/../../../tools/libs/stat -lxenstat"; \
+echo "Libs.private: "; \
+echo "Requires.private: xencontrol,xenstore"; \
+} > /build/xen/tools/pkg-config/xenstat.pc
+if ! cmp -s ./.libxenstat.map.tmp libxenstat.map.tmp; then mv -f ./.libxenstat.map.tmp libxenstat.map.tmp; else rm -f ./.libxenstat.map.tmp; fi
+/build/xen/tools/libs/stat/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/lib
+/build/xen/tools/libs/stat/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/include
+/build/xen/tools/libs/stat/../../../tools/cross-install -m0755 -p libxenstat.so.4.18.0 /build/xen/dist/install/usr/local/lib
+/build/xen/tools/libs/stat/../../../tools/cross-install -m0644 -p libxenstat.a /build/xen/dist/install/usr/local/lib
+ln -sf libxenstat.so.4.18.0 /build/xen/dist/install/usr/local/lib/libxenstat.so.4.18
+ln -sf libxenstat.so.4.18 /build/xen/dist/install/usr/local/lib/libxenstat.so
+for i in  /build/xen/tools/libs/stat/../../../tools/include/xenstat.h; do /build/xen/tools/libs/stat/../../../tools/cross-install -m0644 -p $i /build/xen/dist/install/usr/local/include; done
+/build/xen/tools/libs/stat/../../../tools/cross-install -m0644 -p xenstat.pc /build/xen/dist/install/usr/local/lib/pkgconfig
+make[7]: Leaving directory '/build/xen/tools/libs/stat'
+make[6]: Leaving directory '/build/xen/tools/libs'
+make[6]: Entering directory '/build/xen/tools/libs'
+make -C vchan install
+make[7]: Entering directory '/build/xen/tools/libs/vchan'
+echo 'libxenvchan_4.18.0 { global: *; };' >./.libxenvchan.map.tmp
+{ \
+echo "prefix=/build/xen/tools/libs/vchan/../../.."; \
+echo "includedir=/build/xen/tools/libs/vchan/../../../tools/include"; \
+echo "libdir=/build/xen/tools/libs/vchan"; \
+echo ""; \
+echo "Name: Xenvchan"; \
+echo "Description: The Xenvchan library for Xen hypervisor"; \
+echo "Version: 4.18.0"; \
+echo "Cflags: -I\${includedir}"; \
+echo "Libs: -L\${libdir}     -Wl,-rpath-link=/build/xen/tools/libs/vchan/../../../tools/libs/evtchn -Wl,-rpath-link=/build/xen/tools/libs/vchan/../../../tools/libs/gnttab -Wl,-rpath-link=/build/xen/tools/libs/vchan/../../../tools/libs/store -Wl,-rpath-link=/build/xen/tools/libs/vchan/../../../tools/libs/toolcore -Wl,-rpath-link=/build/xen/tools/libs/vchan/../../../tools/libs/toollog -Wl,-rpath-link=/build/xen/tools/libs/vchan/../../../tools/libs/vchan -lxenvchan"; \
+echo "Libs.private: "; \
+echo "Requires.private: xentoollog,xenstore,xengnttab,xenevtchn"; \
+} > /build/xen/tools/pkg-config/xenvchan.pc
+if ! cmp -s ./.libxenvchan.map.tmp libxenvchan.map.tmp; then mv -f ./.libxenvchan.map.tmp libxenvchan.map.tmp; else rm -f ./.libxenvchan.map.tmp; fi
+/build/xen/tools/libs/vchan/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/lib
+/build/xen/tools/libs/vchan/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/include
+/build/xen/tools/libs/vchan/../../../tools/cross-install -m0755 -p libxenvchan.so.4.18.0 /build/xen/dist/install/usr/local/lib
+/build/xen/tools/libs/vchan/../../../tools/cross-install -m0644 -p libxenvchan.a /build/xen/dist/install/usr/local/lib
+ln -sf libxenvchan.so.4.18.0 /build/xen/dist/install/usr/local/lib/libxenvchan.so.4.18
+ln -sf libxenvchan.so.4.18 /build/xen/dist/install/usr/local/lib/libxenvchan.so
+for i in  /build/xen/tools/libs/vchan/../../../tools/include/libxenvchan.h; do /build/xen/tools/libs/vchan/../../../tools/cross-install -m0644 -p $i /build/xen/dist/install/usr/local/include; done
+/build/xen/tools/libs/vchan/../../../tools/cross-install -m0644 -p xenvchan.pc /build/xen/dist/install/usr/local/lib/pkgconfig
+make[7]: Leaving directory '/build/xen/tools/libs/vchan'
+make[6]: Leaving directory '/build/xen/tools/libs'
+make[6]: Entering directory '/build/xen/tools/libs'
+make -C light install
+make[7]: Entering directory '/build/xen/tools/libs/light'
+sed "s!\(^\| \)$PWD/! !" ._libxl_save_msgs_callout.o.d >._libxl_save_msgs_callout.o.d2.tmp && mv -f ._libxl_save_msgs_callout.o.d2.tmp ._libxl_save_msgs_callout.o.d2
+sed "s!\(^\| \)$PWD/! !" ._libxl_save_msgs_callout.opic.d >._libxl_save_msgs_callout.opic.d2.tmp && mv -f ._libxl_save_msgs_callout.opic.d2.tmp ._libxl_save_msgs_callout.opic.d2
+sed "s!\(^\| \)$PWD/! !" ._libxl_save_msgs_helper.o.d >._libxl_save_msgs_helper.o.d2.tmp && mv -f ._libxl_save_msgs_helper.o.d2.tmp ._libxl_save_msgs_helper.o.d2
+sed "s!\(^\| \)$PWD/! !" ._libxl_types.o.d >._libxl_types.o.d2.tmp && mv -f ._libxl_types.o.d2.tmp ._libxl_types.o.d2
+sed "s!\(^\| \)$PWD/! !" ._libxl_types.opic.d >._libxl_types.opic.d2.tmp && mv -f ._libxl_types.opic.d2.tmp ._libxl_types.opic.d2
+sed "s!\(^\| \)$PWD/! !" ._libxl_types_internal.o.d >._libxl_types_internal.o.d2.tmp && mv -f ._libxl_types_internal.o.d2.tmp ._libxl_types_internal.o.d2
+sed "s!\(^\| \)$PWD/! !" ._libxl_types_internal.opic.d >._libxl_types_internal.opic.d2.tmp && mv -f ._libxl_types_internal.opic.d2.tmp ._libxl_types_internal.opic.d2
+sed "s!\(^\| \)$PWD/! !" .flexarray.o.d >.flexarray.o.d2.tmp && mv -f .flexarray.o.d2.tmp .flexarray.o.d2
+sed "s!\(^\| \)$PWD/! !" .flexarray.opic.d >.flexarray.opic.d2.tmp && mv -f .flexarray.opic.d2.tmp .flexarray.opic.d2
+sed "s!\(^\| \)$PWD/! !" .libxl.o.d >.libxl.o.d2.tmp && mv -f .libxl.o.d2.tmp .libxl.o.d2
+sed "s!\(^\| \)$PWD/! !" .libxl.opic.d >.libxl.opic.d2.tmp && mv -f .libxl.opic.d2.tmp .libxl.opic.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_9pfs.o.d >.libxl_9pfs.o.d2.tmp && mv -f .libxl_9pfs.o.d2.tmp .libxl_9pfs.o.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_9pfs.opic.d >.libxl_9pfs.opic.d2.tmp && mv -f .libxl_9pfs.opic.d2.tmp .libxl_9pfs.opic.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_aoutils.o.d >.libxl_aoutils.o.d2.tmp && mv -f .libxl_aoutils.o.d2.tmp .libxl_aoutils.o.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_aoutils.opic.d >.libxl_aoutils.opic.d2.tmp && mv -f .libxl_aoutils.opic.d2.tmp .libxl_aoutils.opic.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_bootloader.o.d >.libxl_bootloader.o.d2.tmp && mv -f .libxl_bootloader.o.d2.tmp .libxl_bootloader.o.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_bootloader.opic.d >.libxl_bootloader.opic.d2.tmp && mv -f .libxl_bootloader.opic.d2.tmp .libxl_bootloader.opic.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_checkpoint_device.o.d >.libxl_checkpoint_device.o.d2.tmp && mv -f .libxl_checkpoint_device.o.d2.tmp .libxl_checkpoint_device.o.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_checkpoint_device.opic.d >.libxl_checkpoint_device.opic.d2.tmp && mv -f .libxl_checkpoint_device.opic.d2.tmp .libxl_checkpoint_device.opic.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_console.o.d >.libxl_console.o.d2.tmp && mv -f .libxl_console.o.d2.tmp .libxl_console.o.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_console.opic.d >.libxl_console.opic.d2.tmp && mv -f .libxl_console.opic.d2.tmp .libxl_console.opic.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_cpupool.o.d >.libxl_cpupool.o.d2.tmp && mv -f .libxl_cpupool.o.d2.tmp .libxl_cpupool.o.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_cpupool.opic.d >.libxl_cpupool.opic.d2.tmp && mv -f .libxl_cpupool.opic.d2.tmp .libxl_cpupool.opic.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_create.o.d >.libxl_create.o.d2.tmp && mv -f .libxl_create.o.d2.tmp .libxl_create.o.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_create.opic.d >.libxl_create.opic.d2.tmp && mv -f .libxl_create.opic.d2.tmp .libxl_create.opic.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_device.o.d >.libxl_device.o.d2.tmp && mv -f .libxl_device.o.d2.tmp .libxl_device.o.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_device.opic.d >.libxl_device.opic.d2.tmp && mv -f .libxl_device.opic.d2.tmp .libxl_device.opic.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_disk.o.d >.libxl_disk.o.d2.tmp && mv -f .libxl_disk.o.d2.tmp .libxl_disk.o.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_disk.opic.d >.libxl_disk.opic.d2.tmp && mv -f .libxl_disk.opic.d2.tmp .libxl_disk.opic.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_dm.o.d >.libxl_dm.o.d2.tmp && mv -f .libxl_dm.o.d2.tmp .libxl_dm.o.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_dm.opic.d >.libxl_dm.opic.d2.tmp && mv -f .libxl_dm.opic.d2.tmp .libxl_dm.opic.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_dom.o.d >.libxl_dom.o.d2.tmp && mv -f .libxl_dom.o.d2.tmp .libxl_dom.o.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_dom.opic.d >.libxl_dom.opic.d2.tmp && mv -f .libxl_dom.opic.d2.tmp .libxl_dom.opic.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_dom_save.o.d >.libxl_dom_save.o.d2.tmp && mv -f .libxl_dom_save.o.d2.tmp .libxl_dom_save.o.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_dom_save.opic.d >.libxl_dom_save.opic.d2.tmp && mv -f .libxl_dom_save.opic.d2.tmp .libxl_dom_save.opic.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_dom_suspend.o.d >.libxl_dom_suspend.o.d2.tmp && mv -f .libxl_dom_suspend.o.d2.tmp .libxl_dom_suspend.o.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_dom_suspend.opic.d >.libxl_dom_suspend.opic.d2.tmp && mv -f .libxl_dom_suspend.opic.d2.tmp .libxl_dom_suspend.opic.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_domain.o.d >.libxl_domain.o.d2.tmp && mv -f .libxl_domain.o.d2.tmp .libxl_domain.o.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_domain.opic.d >.libxl_domain.opic.d2.tmp && mv -f .libxl_domain.opic.d2.tmp .libxl_domain.opic.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_event.o.d >.libxl_event.o.d2.tmp && mv -f .libxl_event.o.d2.tmp .libxl_event.o.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_event.opic.d >.libxl_event.opic.d2.tmp && mv -f .libxl_event.opic.d2.tmp .libxl_event.opic.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_exec.o.d >.libxl_exec.o.d2.tmp && mv -f .libxl_exec.o.d2.tmp .libxl_exec.o.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_exec.opic.d >.libxl_exec.opic.d2.tmp && mv -f .libxl_exec.opic.d2.tmp .libxl_exec.opic.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_flask.o.d >.libxl_flask.o.d2.tmp && mv -f .libxl_flask.o.d2.tmp .libxl_flask.o.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_flask.opic.d >.libxl_flask.opic.d2.tmp && mv -f .libxl_flask.opic.d2.tmp .libxl_flask.opic.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_fork.o.d >.libxl_fork.o.d2.tmp && mv -f .libxl_fork.o.d2.tmp .libxl_fork.o.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_fork.opic.d >.libxl_fork.opic.d2.tmp && mv -f .libxl_fork.opic.d2.tmp .libxl_fork.opic.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_genid.o.d >.libxl_genid.o.d2.tmp && mv -f .libxl_genid.o.d2.tmp .libxl_genid.o.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_genid.opic.d >.libxl_genid.opic.d2.tmp && mv -f .libxl_genid.opic.d2.tmp .libxl_genid.opic.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_internal.o.d >.libxl_internal.o.d2.tmp && mv -f .libxl_internal.o.d2.tmp .libxl_internal.o.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_internal.opic.d >.libxl_internal.opic.d2.tmp && mv -f .libxl_internal.opic.d2.tmp .libxl_internal.opic.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_json.o.d >.libxl_json.o.d2.tmp && mv -f .libxl_json.o.d2.tmp .libxl_json.o.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_json.opic.d >.libxl_json.opic.d2.tmp && mv -f .libxl_json.opic.d2.tmp .libxl_json.opic.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_libfdt_compat.o.d >.libxl_libfdt_compat.o.d2.tmp && mv -f .libxl_libfdt_compat.o.d2.tmp .libxl_libfdt_compat.o.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_libfdt_compat.opic.d >.libxl_libfdt_compat.opic.d2.tmp && mv -f .libxl_libfdt_compat.opic.d2.tmp .libxl_libfdt_compat.opic.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_linux.o.d >.libxl_linux.o.d2.tmp && mv -f .libxl_linux.o.d2.tmp .libxl_linux.o.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_linux.opic.d >.libxl_linux.opic.d2.tmp && mv -f .libxl_linux.opic.d2.tmp .libxl_linux.opic.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_mem.o.d >.libxl_mem.o.d2.tmp && mv -f .libxl_mem.o.d2.tmp .libxl_mem.o.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_mem.opic.d >.libxl_mem.opic.d2.tmp && mv -f .libxl_mem.opic.d2.tmp .libxl_mem.opic.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_nic.o.d >.libxl_nic.o.d2.tmp && mv -f .libxl_nic.o.d2.tmp .libxl_nic.o.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_nic.opic.d >.libxl_nic.opic.d2.tmp && mv -f .libxl_nic.opic.d2.tmp .libxl_nic.opic.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_no_colo.o.d >.libxl_no_colo.o.d2.tmp && mv -f .libxl_no_colo.o.d2.tmp .libxl_no_colo.o.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_no_colo.opic.d >.libxl_no_colo.opic.d2.tmp && mv -f .libxl_no_colo.opic.d2.tmp .libxl_no_colo.opic.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_no_convert_callout.o.d >.libxl_no_convert_callout.o.d2.tmp && mv -f .libxl_no_convert_callout.o.d2.tmp .libxl_no_convert_callout.o.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_no_convert_callout.opic.d >.libxl_no_convert_callout.opic.d2.tmp && mv -f .libxl_no_convert_callout.opic.d2.tmp .libxl_no_convert_callout.opic.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_nocpuid.o.d >.libxl_nocpuid.o.d2.tmp && mv -f .libxl_nocpuid.o.d2.tmp .libxl_nocpuid.o.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_nocpuid.opic.d >.libxl_nocpuid.opic.d2.tmp && mv -f .libxl_nocpuid.opic.d2.tmp .libxl_nocpuid.opic.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_nonetbuffer.o.d >.libxl_nonetbuffer.o.d2.tmp && mv -f .libxl_nonetbuffer.o.d2.tmp .libxl_nonetbuffer.o.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_nonetbuffer.opic.d >.libxl_nonetbuffer.opic.d2.tmp && mv -f .libxl_nonetbuffer.opic.d2.tmp .libxl_nonetbuffer.opic.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_numa.o.d >.libxl_numa.o.d2.tmp && mv -f .libxl_numa.o.d2.tmp .libxl_numa.o.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_numa.opic.d >.libxl_numa.opic.d2.tmp && mv -f .libxl_numa.opic.d2.tmp .libxl_numa.opic.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_paths.o.d >.libxl_paths.o.d2.tmp && mv -f .libxl_paths.o.d2.tmp .libxl_paths.o.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_paths.opic.d >.libxl_paths.opic.d2.tmp && mv -f .libxl_paths.opic.d2.tmp .libxl_paths.opic.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_pci.o.d >.libxl_pci.o.d2.tmp && mv -f .libxl_pci.o.d2.tmp .libxl_pci.o.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_pci.opic.d >.libxl_pci.opic.d2.tmp && mv -f .libxl_pci.opic.d2.tmp .libxl_pci.opic.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_pvcalls.o.d >.libxl_pvcalls.o.d2.tmp && mv -f .libxl_pvcalls.o.d2.tmp .libxl_pvcalls.o.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_pvcalls.opic.d >.libxl_pvcalls.opic.d2.tmp && mv -f .libxl_pvcalls.opic.d2.tmp .libxl_pvcalls.opic.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_qmp.o.d >.libxl_qmp.o.d2.tmp && mv -f .libxl_qmp.o.d2.tmp .libxl_qmp.o.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_qmp.opic.d >.libxl_qmp.opic.d2.tmp && mv -f .libxl_qmp.opic.d2.tmp .libxl_qmp.opic.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_remus.o.d >.libxl_remus.o.d2.tmp && mv -f .libxl_remus.o.d2.tmp .libxl_remus.o.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_remus.opic.d >.libxl_remus.opic.d2.tmp && mv -f .libxl_remus.opic.d2.tmp .libxl_remus.opic.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_remus_disk_drbd.o.d >.libxl_remus_disk_drbd.o.d2.tmp && mv -f .libxl_remus_disk_drbd.o.d2.tmp .libxl_remus_disk_drbd.o.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_remus_disk_drbd.opic.d >.libxl_remus_disk_drbd.opic.d2.tmp && mv -f .libxl_remus_disk_drbd.opic.d2.tmp .libxl_remus_disk_drbd.opic.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_riscv.o.d >.libxl_riscv.o.d2.tmp && mv -f .libxl_riscv.o.d2.tmp .libxl_riscv.o.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_riscv.opic.d >.libxl_riscv.opic.d2.tmp && mv -f .libxl_riscv.opic.d2.tmp .libxl_riscv.opic.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_save_callout.o.d >.libxl_save_callout.o.d2.tmp && mv -f .libxl_save_callout.o.d2.tmp .libxl_save_callout.o.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_save_callout.opic.d >.libxl_save_callout.opic.d2.tmp && mv -f .libxl_save_callout.opic.d2.tmp .libxl_save_callout.opic.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_save_helper.o.d >.libxl_save_helper.o.d2.tmp && mv -f .libxl_save_helper.o.d2.tmp .libxl_save_helper.o.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_sched.o.d >.libxl_sched.o.d2.tmp && mv -f .libxl_sched.o.d2.tmp .libxl_sched.o.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_sched.opic.d >.libxl_sched.opic.d2.tmp && mv -f .libxl_sched.opic.d2.tmp .libxl_sched.opic.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_setresuid.o.d >.libxl_setresuid.o.d2.tmp && mv -f .libxl_setresuid.o.d2.tmp .libxl_setresuid.o.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_setresuid.opic.d >.libxl_setresuid.opic.d2.tmp && mv -f .libxl_setresuid.opic.d2.tmp .libxl_setresuid.opic.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_stream_read.o.d >.libxl_stream_read.o.d2.tmp && mv -f .libxl_stream_read.o.d2.tmp .libxl_stream_read.o.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_stream_read.opic.d >.libxl_stream_read.opic.d2.tmp && mv -f .libxl_stream_read.opic.d2.tmp .libxl_stream_read.opic.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_stream_write.o.d >.libxl_stream_write.o.d2.tmp && mv -f .libxl_stream_write.o.d2.tmp .libxl_stream_write.o.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_stream_write.opic.d >.libxl_stream_write.opic.d2.tmp && mv -f .libxl_stream_write.opic.d2.tmp .libxl_stream_write.opic.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_test_fdevent.opic.d >.libxl_test_fdevent.opic.d2.tmp && mv -f .libxl_test_fdevent.opic.d2.tmp .libxl_test_fdevent.opic.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_test_timedereg.opic.d >.libxl_test_timedereg.opic.d2.tmp && mv -f .libxl_test_timedereg.opic.d2.tmp .libxl_test_timedereg.opic.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_tmem.o.d >.libxl_tmem.o.d2.tmp && mv -f .libxl_tmem.o.d2.tmp .libxl_tmem.o.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_tmem.opic.d >.libxl_tmem.opic.d2.tmp && mv -f .libxl_tmem.opic.d2.tmp .libxl_tmem.opic.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_usb.o.d >.libxl_usb.o.d2.tmp && mv -f .libxl_usb.o.d2.tmp .libxl_usb.o.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_usb.opic.d >.libxl_usb.opic.d2.tmp && mv -f .libxl_usb.opic.d2.tmp .libxl_usb.opic.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_utils.o.d >.libxl_utils.o.d2.tmp && mv -f .libxl_utils.o.d2.tmp .libxl_utils.o.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_utils.opic.d >.libxl_utils.opic.d2.tmp && mv -f .libxl_utils.opic.d2.tmp .libxl_utils.opic.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_uuid.o.d >.libxl_uuid.o.d2.tmp && mv -f .libxl_uuid.o.d2.tmp .libxl_uuid.o.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_uuid.opic.d >.libxl_uuid.opic.d2.tmp && mv -f .libxl_uuid.opic.d2.tmp .libxl_uuid.opic.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_vdispl.o.d >.libxl_vdispl.o.d2.tmp && mv -f .libxl_vdispl.o.d2.tmp .libxl_vdispl.o.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_vdispl.opic.d >.libxl_vdispl.opic.d2.tmp && mv -f .libxl_vdispl.opic.d2.tmp .libxl_vdispl.opic.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_virtio.o.d >.libxl_virtio.o.d2.tmp && mv -f .libxl_virtio.o.d2.tmp .libxl_virtio.o.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_virtio.opic.d >.libxl_virtio.opic.d2.tmp && mv -f .libxl_virtio.opic.d2.tmp .libxl_virtio.opic.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_vkb.o.d >.libxl_vkb.o.d2.tmp && mv -f .libxl_vkb.o.d2.tmp .libxl_vkb.o.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_vkb.opic.d >.libxl_vkb.opic.d2.tmp && mv -f .libxl_vkb.opic.d2.tmp .libxl_vkb.opic.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_vnuma.o.d >.libxl_vnuma.o.d2.tmp && mv -f .libxl_vnuma.o.d2.tmp .libxl_vnuma.o.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_vnuma.opic.d >.libxl_vnuma.opic.d2.tmp && mv -f .libxl_vnuma.opic.d2.tmp .libxl_vnuma.opic.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_vsnd.o.d >.libxl_vsnd.o.d2.tmp && mv -f .libxl_vsnd.o.d2.tmp .libxl_vsnd.o.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_vsnd.opic.d >.libxl_vsnd.opic.d2.tmp && mv -f .libxl_vsnd.opic.d2.tmp .libxl_vsnd.opic.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_vtpm.o.d >.libxl_vtpm.o.d2.tmp && mv -f .libxl_vtpm.o.d2.tmp .libxl_vtpm.o.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_vtpm.opic.d >.libxl_vtpm.opic.d2.tmp && mv -f .libxl_vtpm.opic.d2.tmp .libxl_vtpm.opic.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_xshelp.o.d >.libxl_xshelp.o.d2.tmp && mv -f .libxl_xshelp.o.d2.tmp .libxl_xshelp.o.d2
+sed "s!\(^\| \)$PWD/! !" .libxl_xshelp.opic.d >.libxl_xshelp.opic.d2.tmp && mv -f .libxl_xshelp.opic.d2.tmp .libxl_xshelp.opic.d2
+sed "s!\(^\| \)$PWD/! !" .osdeps.o.d >.osdeps.o.d2.tmp && mv -f .osdeps.o.d2.tmp .osdeps.o.d2
+sed "s!\(^\| \)$PWD/! !" .osdeps.opic.d >.osdeps.opic.d2.tmp && mv -f .osdeps.opic.d2.tmp .osdeps.opic.d2
+sed "s!\(^\| \)$PWD/! !" .test_common.o.d >.test_common.o.d2.tmp && mv -f .test_common.o.d2.tmp .test_common.o.d2
+sed "s!\(^\| \)$PWD/! !" .test_fdderegrace.o.d >.test_fdderegrace.o.d2.tmp && mv -f .test_fdderegrace.o.d2.tmp .test_fdderegrace.o.d2
+sed "s!\(^\| \)$PWD/! !" .test_timedereg.o.d >.test_timedereg.o.d2.tmp && mv -f .test_timedereg.o.d2.tmp .test_timedereg.o.d2
+echo 'libxenlight_4.18.0 { global: *; };' >./.libxenlight.map.tmp
+{ \
+echo "prefix=/build/xen/tools/libs/light/../../.."; \
+echo "includedir=/build/xen/tools/libs/light/../../../tools/include"; \
+echo "libdir=/build/xen/tools/libs/light"; \
+echo ""; \
+echo "Name: Xenlight"; \
+echo "Description: The Xenlight library for Xen hypervisor"; \
+echo "Version: 4.18.0"; \
+echo "Cflags: -I\${includedir}"; \
+echo "Libs: -L\${libdir}     -Wl,-rpath-link=/build/xen/tools/libs/light/../../../tools/libs/call -Wl,-rpath-link=/build/xen/tools/libs/light/../../../tools/libs/ctrl -Wl,-rpath-link=/build/xen/tools/libs/light/../../../tools/libs/devicemodel -Wl,-rpath-link=/build/xen/tools/libs/light/../../../tools/libs/evtchn -Wl,-rpath-link=/build/xen/tools/libs/light/../../../tools/libs/foreignmemory -Wl,-rpath-link=/build/xen/tools/libs/light/../../../tools/libs/gnttab -Wl,-rpath-link=/build/xen/tools/libs/light/../../../tools/libs/guest -Wl,-rpath-link=/build/xen/tools/libs/light/../../../tools/libs/hypfs -Wl,-rpath-link=/build/xen/tools/libs/light/../../../tools/libs/store -Wl,-rpath-link=/build/xen/tools/libs/light/../../../tools/libs/toolcore -Wl,-rpath-link=/build/xen/tools/libs/light/../../../tools/libs/toollog -Wl,-rpath-link=/build/xen/tools/libs/light/../../../tools/libs/light -lxenlight"; \
+echo "Libs.private: "; \
+echo "Requires.private: xentoollog,xenevtchn,xentoolcore,xencontrol,xenstore,xenhypfs,xenguest"; \
+} > /build/xen/tools/pkg-config/xenlight.pc
+if ! cmp -s ./.libxenlight.map.tmp libxenlight.map.tmp; then mv -f ./.libxenlight.map.tmp libxenlight.map.tmp; else rm -f ./.libxenlight.map.tmp; fi
+/build/xen/tools/libs/light/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/lib
+/build/xen/tools/libs/light/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/include
+/build/xen/tools/libs/light/../../../tools/cross-install -m0755 -p libxenlight.so.4.18.0 /build/xen/dist/install/usr/local/lib
+/build/xen/tools/libs/light/../../../tools/cross-install -m0644 -p libxenlight.a /build/xen/dist/install/usr/local/lib
+ln -sf libxenlight.so.4.18.0 /build/xen/dist/install/usr/local/lib/libxenlight.so.4.18
+ln -sf libxenlight.so.4.18 /build/xen/dist/install/usr/local/lib/libxenlight.so
+for i in  /build/xen/tools/libs/light/../../../tools/include/libxl.h  /build/xen/tools/libs/light/../../../tools/include/libxl_event.h  /build/xen/tools/libs/light/../../../tools/include/libxl_json.h  /build/xen/tools/libs/light/../../../tools/include/_libxl_types.h  /build/xen/tools/libs/light/../../../tools/include/_libxl_types_json.h  /build/xen/tools/libs/light/../../../tools/include/libxl_utils.h  /build/xen/tools/libs/light/../../../tools/include/libxl_uuid.h; do /build/xen/tools/libs/light/../../../tools/cross-install -m0644 -p $i /build/xen/dist/install/usr/local/include; done
+/build/xen/tools/libs/light/../../../tools/cross-install -m0644 -p xenlight.pc /build/xen/dist/install/usr/local/lib/pkgconfig
+/build/xen/tools/libs/light/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/lib/xen/bin
+/build/xen/tools/libs/light/../../../tools/cross-install -m0755 -p libxl-save-helper /build/xen/dist/install/usr/local/lib/xen/bin
+make[7]: Leaving directory '/build/xen/tools/libs/light'
+make[6]: Leaving directory '/build/xen/tools/libs'
+make[6]: Entering directory '/build/xen/tools/libs'
+make -C util install
+make[7]: Entering directory '/build/xen/tools/libs/util'
+sed "s!\(^\| \)$PWD/! !" .libxlu_cfg.o.d >.libxlu_cfg.o.d2.tmp && mv -f .libxlu_cfg.o.d2.tmp .libxlu_cfg.o.d2
+sed "s!\(^\| \)$PWD/! !" .libxlu_cfg.opic.d >.libxlu_cfg.opic.d2.tmp && mv -f .libxlu_cfg.opic.d2.tmp .libxlu_cfg.opic.d2
+sed "s!\(^\| \)$PWD/! !" .libxlu_cfg_l.o.d >.libxlu_cfg_l.o.d2.tmp && mv -f .libxlu_cfg_l.o.d2.tmp .libxlu_cfg_l.o.d2
+sed "s!\(^\| \)$PWD/! !" .libxlu_cfg_l.opic.d >.libxlu_cfg_l.opic.d2.tmp && mv -f .libxlu_cfg_l.opic.d2.tmp .libxlu_cfg_l.opic.d2
+sed "s!\(^\| \)$PWD/! !" .libxlu_cfg_y.o.d >.libxlu_cfg_y.o.d2.tmp && mv -f .libxlu_cfg_y.o.d2.tmp .libxlu_cfg_y.o.d2
+sed "s!\(^\| \)$PWD/! !" .libxlu_cfg_y.opic.d >.libxlu_cfg_y.opic.d2.tmp && mv -f .libxlu_cfg_y.opic.d2.tmp .libxlu_cfg_y.opic.d2
+sed "s!\(^\| \)$PWD/! !" .libxlu_disk.o.d >.libxlu_disk.o.d2.tmp && mv -f .libxlu_disk.o.d2.tmp .libxlu_disk.o.d2
+sed "s!\(^\| \)$PWD/! !" .libxlu_disk.opic.d >.libxlu_disk.opic.d2.tmp && mv -f .libxlu_disk.opic.d2.tmp .libxlu_disk.opic.d2
+sed "s!\(^\| \)$PWD/! !" .libxlu_disk_l.o.d >.libxlu_disk_l.o.d2.tmp && mv -f .libxlu_disk_l.o.d2.tmp .libxlu_disk_l.o.d2
+sed "s!\(^\| \)$PWD/! !" .libxlu_disk_l.opic.d >.libxlu_disk_l.opic.d2.tmp && mv -f .libxlu_disk_l.opic.d2.tmp .libxlu_disk_l.opic.d2
+sed "s!\(^\| \)$PWD/! !" .libxlu_pci.o.d >.libxlu_pci.o.d2.tmp && mv -f .libxlu_pci.o.d2.tmp .libxlu_pci.o.d2
+sed "s!\(^\| \)$PWD/! !" .libxlu_pci.opic.d >.libxlu_pci.opic.d2.tmp && mv -f .libxlu_pci.opic.d2.tmp .libxlu_pci.opic.d2
+sed "s!\(^\| \)$PWD/! !" .libxlu_vif.o.d >.libxlu_vif.o.d2.tmp && mv -f .libxlu_vif.o.d2.tmp .libxlu_vif.o.d2
+sed "s!\(^\| \)$PWD/! !" .libxlu_vif.opic.d >.libxlu_vif.opic.d2.tmp && mv -f .libxlu_vif.opic.d2.tmp .libxlu_vif.opic.d2
+echo 'libxlutil_4.18.0 { global: *; };' >./.libxlutil.map.tmp
+if ! cmp -s ./.libxlutil.map.tmp libxlutil.map.tmp; then mv -f ./.libxlutil.map.tmp libxlutil.map.tmp; else rm -f ./.libxlutil.map.tmp; fi
+/build/xen/tools/libs/util/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/lib
+/build/xen/tools/libs/util/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/include
+/build/xen/tools/libs/util/../../../tools/cross-install -m0755 -p libxlutil.so.4.18.0 /build/xen/dist/install/usr/local/lib
+/build/xen/tools/libs/util/../../../tools/cross-install -m0644 -p libxlutil.a /build/xen/dist/install/usr/local/lib
+ln -sf libxlutil.so.4.18.0 /build/xen/dist/install/usr/local/lib/libxlutil.so.4.18
+ln -sf libxlutil.so.4.18 /build/xen/dist/install/usr/local/lib/libxlutil.so
+for i in  /build/xen/tools/libs/util/../../../tools/include/libxlutil.h; do /build/xen/tools/libs/util/../../../tools/cross-install -m0644 -p $i /build/xen/dist/install/usr/local/include; done
+/build/xen/tools/libs/util/../../../tools/cross-install -m0644 -p xlutil.pc /build/xen/dist/install/usr/local/lib/pkgconfig
+make[7]: Leaving directory '/build/xen/tools/libs/util'
+make[6]: Leaving directory '/build/xen/tools/libs'
+make[5]: Leaving directory '/build/xen/tools/libs'
+make[4]: Leaving directory '/build/xen/tools'
+make[4]: Entering directory '/build/xen/tools'
+make -C flask install
+make[5]: Entering directory '/build/xen/tools/flask'
+make[6]: Entering directory '/build/xen/tools/flask'
+make -C utils install
+make[7]: Entering directory '/build/xen/tools/flask/utils'
+sed "s!\(^\| \)$PWD/! !" .get-bool.o.d >.get-bool.o.d2.tmp && mv -f .get-bool.o.d2.tmp .get-bool.o.d2
+sed "s!\(^\| \)$PWD/! !" .getenforce.o.d >.getenforce.o.d2.tmp && mv -f .getenforce.o.d2.tmp .getenforce.o.d2
+sed "s!\(^\| \)$PWD/! !" .label-pci.o.d >.label-pci.o.d2.tmp && mv -f .label-pci.o.d2.tmp .label-pci.o.d2
+sed "s!\(^\| \)$PWD/! !" .loadpolicy.o.d >.loadpolicy.o.d2.tmp && mv -f .loadpolicy.o.d2.tmp .loadpolicy.o.d2
+sed "s!\(^\| \)$PWD/! !" .set-bool.o.d >.set-bool.o.d2.tmp && mv -f .set-bool.o.d2.tmp .set-bool.o.d2
+sed "s!\(^\| \)$PWD/! !" .setenforce.o.d >.setenforce.o.d2.tmp && mv -f .setenforce.o.d2.tmp .setenforce.o.d2
+/build/xen/tools/flask/utils/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/sbin
+/build/xen/tools/flask/utils/../../../tools/cross-install -m0755 -p flask-loadpolicy flask-setenforce flask-getenforce flask-label-pci flask-get-bool flask-set-bool /build/xen/dist/install/usr/local/sbin
+make[7]: Leaving directory '/build/xen/tools/flask/utils'
+make[6]: Leaving directory '/build/xen/tools/flask'
+make[6]: Entering directory '/build/xen/tools/flask'
+make -C policy install
+make[7]: Entering directory '/build/xen/tools/flask/policy'
+/build/xen/tools/flask/policy/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install//boot
+/build/xen/tools/flask/policy/../../../tools/cross-install -m0644 -p /build/xen/tools/flask/policy/xenpolicy-4.18-unstable /build/xen/dist/install//boot
+make[7]: Leaving directory '/build/xen/tools/flask/policy'
+make[6]: Leaving directory '/build/xen/tools/flask'
+make[5]: Leaving directory '/build/xen/tools/flask'
+make[4]: Leaving directory '/build/xen/tools'
+make[4]: Entering directory '/build/xen/tools'
+make -C fuzz install
+make[5]: Entering directory '/build/xen/tools/fuzz'
+make[6]: Entering directory '/build/xen/tools/fuzz'
+make -C libelf install
+make[7]: Entering directory '/build/xen/tools/fuzz/libelf'
+ln -nsf ../../../xen/common/libelf/libelf-tools.c libelf-tools.c
+ln -nsf ../../../xen/common/libelf/libelf-loader.c libelf-loader.c
+ln -nsf ../../../xen/common/libelf/libelf-dominfo.c libelf-dominfo.c
+make[7]: Leaving directory '/build/xen/tools/fuzz/libelf'
+make[6]: Leaving directory '/build/xen/tools/fuzz'
+make[6]: Entering directory '/build/xen/tools/fuzz'
+make -C x86_instruction_emulator install
+make[7]: Entering directory '/build/xen/tools/fuzz/x86_instruction_emulator'
+make[7]: Nothing to be done for 'install'.
+make[7]: Leaving directory '/build/xen/tools/fuzz/x86_instruction_emulator'
+make[6]: Leaving directory '/build/xen/tools/fuzz'
+make[5]: Leaving directory '/build/xen/tools/fuzz'
+make[4]: Leaving directory '/build/xen/tools'
+make[4]: Entering directory '/build/xen/tools'
+make -C xenstore install
+make[5]: Entering directory '/build/xen/tools/xenstore'
+sed "s!\(^\| \)$PWD/! !" .hashtable.o.d >.hashtable.o.d2.tmp && mv -f .hashtable.o.d2.tmp .hashtable.o.d2
+sed "s!\(^\| \)$PWD/! !" .talloc.o.d >.talloc.o.d2.tmp && mv -f .talloc.o.d2.tmp .talloc.o.d2
+sed "s!\(^\| \)$PWD/! !" .tdb.o.d >.tdb.o.d2.tmp && mv -f .tdb.o.d2.tmp .tdb.o.d2
+sed "s!\(^\| \)$PWD/! !" .utils.o.d >.utils.o.d2.tmp && mv -f .utils.o.d2.tmp .utils.o.d2
+sed "s!\(^\| \)$PWD/! !" .xenstore_client.o.d >.xenstore_client.o.d2.tmp && mv -f .xenstore_client.o.d2.tmp .xenstore_client.o.d2
+sed "s!\(^\| \)$PWD/! !" .xenstore_control.o.d >.xenstore_control.o.d2.tmp && mv -f .xenstore_control.o.d2.tmp .xenstore_control.o.d2
+sed "s!\(^\| \)$PWD/! !" .xenstored_control.o.d >.xenstored_control.o.d2.tmp && mv -f .xenstored_control.o.d2.tmp .xenstored_control.o.d2
+sed "s!\(^\| \)$PWD/! !" .xenstored_core.o.d >.xenstored_core.o.d2.tmp && mv -f .xenstored_core.o.d2.tmp .xenstored_core.o.d2
+sed "s!\(^\| \)$PWD/! !" .xenstored_domain.o.d >.xenstored_domain.o.d2.tmp && mv -f .xenstored_domain.o.d2.tmp .xenstored_domain.o.d2
+sed "s!\(^\| \)$PWD/! !" .xenstored_posix.o.d >.xenstored_posix.o.d2.tmp && mv -f .xenstored_posix.o.d2.tmp .xenstored_posix.o.d2
+sed "s!\(^\| \)$PWD/! !" .xenstored_transaction.o.d >.xenstored_transaction.o.d2.tmp && mv -f .xenstored_transaction.o.d2.tmp .xenstored_transaction.o.d2
+sed "s!\(^\| \)$PWD/! !" .xenstored_watch.o.d >.xenstored_watch.o.d2.tmp && mv -f .xenstored_watch.o.d2.tmp .xenstored_watch.o.d2
+sed "s!\(^\| \)$PWD/! !" .xs_lib.o.d >.xs_lib.o.d2.tmp && mv -f .xs_lib.o.d2.tmp .xs_lib.o.d2
+/build/xen/tools/xenstore/../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/bin
+/build/xen/tools/xenstore/../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/sbin
+/build/xen/tools/xenstore/../../tools/cross-install -m0755 -p xenstored /build/xen/dist/install/usr/local/sbin
+/build/xen/tools/xenstore/../../tools/cross-install -m0755 -p xenstore-control /build/xen/dist/install/usr/local/bin
+/build/xen/tools/xenstore/../../tools/cross-install -m0755 -p xenstore /build/xen/dist/install/usr/local/bin
+set -e ; for c in xenstore-exists xenstore-list xenstore-read xenstore-rm xenstore-chmod xenstore-write xenstore-ls xenstore-watch ; do \
+	ln -f /build/xen/dist/install/usr/local/bin/xenstore /build/xen/dist/install/usr/local/bin/${c} ; \
+done
+make[5]: Leaving directory '/build/xen/tools/xenstore'
+make[4]: Leaving directory '/build/xen/tools'
+make[4]: Entering directory '/build/xen/tools'
+make -C misc install
+make[5]: Entering directory '/build/xen/tools/misc'
+sed "s!\(^\| \)$PWD/! !" .xen-access.o.d >.xen-access.o.d2.tmp && mv -f .xen-access.o.d2.tmp .xen-access.o.d2
+sed "s!\(^\| \)$PWD/! !" .xen-diag.o.d >.xen-diag.o.d2.tmp && mv -f .xen-diag.o.d2.tmp .xen-diag.o.d2
+sed "s!\(^\| \)$PWD/! !" .xen-livepatch.o.d >.xen-livepatch.o.d2.tmp && mv -f .xen-livepatch.o.d2.tmp .xen-livepatch.o.d2
+sed "s!\(^\| \)$PWD/! !" .xencov.o.d >.xencov.o.d2.tmp && mv -f .xencov.o.d2.tmp .xencov.o.d2
+sed "s!\(^\| \)$PWD/! !" .xenhypfs.o.d >.xenhypfs.o.d2.tmp && mv -f .xenhypfs.o.d2.tmp .xenhypfs.o.d2
+sed "s!\(^\| \)$PWD/! !" .xenlockprof.o.d >.xenlockprof.o.d2.tmp && mv -f .xenlockprof.o.d2.tmp .xenlockprof.o.d2
+sed "s!\(^\| \)$PWD/! !" .xenperf.o.d >.xenperf.o.d2.tmp && mv -f .xenperf.o.d2.tmp .xenperf.o.d2
+sed "s!\(^\| \)$PWD/! !" .xenpm.o.d >.xenpm.o.d2.tmp && mv -f .xenpm.o.d2.tmp .xenpm.o.d2
+sed "s!\(^\| \)$PWD/! !" .xenwatchdogd.o.d >.xenwatchdogd.o.d2.tmp && mv -f .xenwatchdogd.o.d2.tmp .xenwatchdogd.o.d2
+/build/xen/tools/misc/../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/bin
+/build/xen/tools/misc/../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/sbin
+/build/xen/tools/misc/../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/lib/xen/bin
+/build/xen/tools/misc/../../tools/python/install-wrap "/usr/bin/python3 -s" /build/xen/tools/misc/../../tools/cross-install -m0755 -p xencov_split  /build/xen/dist/install/usr/local/bin
+/build/xen/tools/misc/../../tools/python/install-wrap "/usr/bin/python3 -s" /build/xen/tools/misc/../../tools/cross-install -m0755 -p xencov xenhypfs xenlockprof xenperf xenpm xenwatchdogd xen-access xen-livepatch xen-diag  /build/xen/dist/install/usr/local/sbin
+/build/xen/tools/misc/../../tools/python/install-wrap "/usr/bin/python3 -s" /build/xen/tools/misc/../../tools/cross-install -m0755 -p xenpvnetboot /build/xen/dist/install/usr/local/lib/xen/bin
+make[5]: Leaving directory '/build/xen/tools/misc'
+make[4]: Leaving directory '/build/xen/tools'
+make[4]: Entering directory '/build/xen/tools'
+make -C examples install
+make[5]: Entering directory '/build/xen/tools/examples'
+/build/xen/tools/examples/../../tools/cross-install -d -m0755 -p /build/xen/dist/install/etc/xen
+/build/xen/tools/examples/../../tools/cross-install -d -m0755 -p /build/xen/dist/install/etc/xen
+/build/xen/tools/examples/../../tools/cross-install -m0644 -p README /build/xen/dist/install/etc/xen
+/build/xen/tools/examples/../../tools/cross-install -d -m0755 -p /build/xen/dist/install/etc/xen/auto
+/build/xen/tools/examples/../../tools/cross-install -m0644 -p xlexample.hvm xlexample.pvlinux xlexample.pvhlinux xl.conf cpupool /build/xen/dist/install/etc/xen
+make[5]: Leaving directory '/build/xen/tools/examples'
+make[4]: Leaving directory '/build/xen/tools'
+make[4]: Entering directory '/build/xen/tools'
+make -C hotplug install
+make[5]: Entering directory '/build/xen/tools/hotplug'
+make[6]: Entering directory '/build/xen/tools/hotplug'
+make -C common install
+make[7]: Entering directory '/build/xen/tools/hotplug/common'
+/build/xen/tools/hotplug/common/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/etc/xen/scripts
+set -e; for i in ; \
+   do \
+   /build/xen/tools/hotplug/common/../../../tools/cross-install -m0755 -p $i /build/xen/dist/install/etc/xen/scripts; \
+done
+set -e; for i in hotplugpath.sh; \
+   do \
+   /build/xen/tools/hotplug/common/../../../tools/cross-install -m0644 -p $i /build/xen/dist/install/etc/xen/scripts; \
+done
+make[7]: Leaving directory '/build/xen/tools/hotplug/common'
+make[6]: Leaving directory '/build/xen/tools/hotplug'
+make[6]: Entering directory '/build/xen/tools/hotplug'
+make -C Linux install
+make[7]: Entering directory '/build/xen/tools/hotplug/Linux'
+/build/xen/tools/hotplug/Linux/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/etc/init.d
+/build/xen/tools/hotplug/Linux/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/etc/xen/scripts
+/build/xen/tools/hotplug/Linux/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/etc/default
+set -e; for i in vif-bridge vif-route vif-nat vif-openvswitch vif-setup block block-enbd block-nbd external-device-migrate vscsi block-iscsi block-tap block-drbd-probe block-dummy colo-proxy-setup launch-xenstore; \
+    do \
+    /build/xen/tools/hotplug/Linux/../../../tools/cross-install -m0755 -p $i /build/xen/dist/install/etc/xen/scripts; \
+done
+/build/xen/tools/hotplug/Linux/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/lib/xen/bin
+/build/xen/tools/hotplug/Linux/../../../tools/cross-install -m0644 -p init.d/sysconfig.xendomains /build/xen/dist/install/etc/default/xendomains
+/build/xen/tools/hotplug/Linux/../../../tools/cross-install -m0644 -p init.d/sysconfig.xencommons /build/xen/dist/install/etc/default/xencommons
+/build/xen/tools/hotplug/Linux/../../../tools/cross-install -m0755 -p xendomains /build/xen/dist/install/usr/local/lib/xen/bin
+/build/xen/tools/hotplug/Linux/../../../tools/cross-install -m0755 -p init.d/xendomains /build/xen/dist/install/etc/init.d
+/build/xen/tools/hotplug/Linux/../../../tools/cross-install -m0755 -p init.d/xencommons /build/xen/dist/install/etc/init.d
+/build/xen/tools/hotplug/Linux/../../../tools/cross-install -m0755 -p init.d/xendriverdomain /build/xen/dist/install/etc/init.d
+/build/xen/tools/hotplug/Linux/../../../tools/cross-install -m0755 -p init.d/xen-watchdog /build/xen/dist/install/etc/init.d
+set -e; for i in xen-script-common.sh locking.sh logging.sh xen-hotplug-common.sh xen-network-common.sh vif-common.sh block-common.sh; \
+    do \
+    /build/xen/tools/hotplug/Linux/../../../tools/cross-install -m0644 -p $i /build/xen/dist/install/etc/xen/scripts; \
+done
+make[7]: Leaving directory '/build/xen/tools/hotplug/Linux'
+make[6]: Leaving directory '/build/xen/tools/hotplug'
+make[5]: Leaving directory '/build/xen/tools/hotplug'
+make[4]: Leaving directory '/build/xen/tools'
+make[4]: Entering directory '/build/xen/tools'
+make -C xentrace install
+make[5]: Entering directory '/build/xen/tools/xentrace'
+sed "s!\(^\| \)$PWD/! !" .mread.o.d >.mread.o.d2.tmp && mv -f .mread.o.d2.tmp .mread.o.d2
+sed "s!\(^\| \)$PWD/! !" .setsize.o.d >.setsize.o.d2.tmp && mv -f .setsize.o.d2.tmp .setsize.o.d2
+sed "s!\(^\| \)$PWD/! !" .xenalyze.o.d >.xenalyze.o.d2.tmp && mv -f .xenalyze.o.d2.tmp .xenalyze.o.d2
+sed "s!\(^\| \)$PWD/! !" .xenctx.o.d >.xenctx.o.d2.tmp && mv -f .xenctx.o.d2.tmp .xenctx.o.d2
+sed "s!\(^\| \)$PWD/! !" .xentrace.o.d >.xentrace.o.d2.tmp && mv -f .xentrace.o.d2.tmp .xentrace.o.d2
+/build/xen/tools/xentrace/../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/bin
+/build/xen/tools/xentrace/../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/sbin
+/build/xen/tools/xentrace/../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/lib/xen/bin
+/build/xen/tools/xentrace/../../tools/cross-install -m0755 -p xenalyze /build/xen/dist/install/usr/local/bin
+/build/xen/tools/xentrace/../../tools/cross-install -m0755 -p xentrace xentrace_setsize /build/xen/dist/install/usr/local/sbin
+/build/xen/tools/xentrace/../../tools/python/install-wrap "/usr/bin/python3 -s" /build/xen/tools/xentrace/../../tools/cross-install -m0755 -p xentrace_format /build/xen/dist/install/usr/local/bin
+/build/xen/tools/xentrace/../../tools/cross-install -m0755 -p xenctx /build/xen/dist/install/usr/local/lib/xen/bin
+make[5]: Leaving directory '/build/xen/tools/xentrace'
+make[4]: Leaving directory '/build/xen/tools'
+make[4]: Entering directory '/build/xen/tools'
+make -C console install
+make[5]: Entering directory '/build/xen/tools/console'
+make[6]: Entering directory '/build/xen/tools/console'
+make -C daemon install
+make[7]: Entering directory '/build/xen/tools/console/daemon'
+sed "s!\(^\| \)$PWD/! !" .io.o.d >.io.o.d2.tmp && mv -f .io.o.d2.tmp .io.o.d2
+sed "s!\(^\| \)$PWD/! !" .main.o.d >.main.o.d2.tmp && mv -f .main.o.d2.tmp .main.o.d2
+sed "s!\(^\| \)$PWD/! !" .utils.o.d >.utils.o.d2.tmp && mv -f .utils.o.d2.tmp .utils.o.d2
+/build/xen/tools/console/daemon/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install//usr/local/sbin
+/build/xen/tools/console/daemon/../../../tools/cross-install -m0755 -p xenconsoled /build/xen/dist/install//usr/local/sbin
+make[7]: Leaving directory '/build/xen/tools/console/daemon'
+make[6]: Leaving directory '/build/xen/tools/console'
+make[6]: Entering directory '/build/xen/tools/console'
+make -C client install
+make[7]: Entering directory '/build/xen/tools/console/client'
+sed "s!\(^\| \)$PWD/! !" .main.o.d >.main.o.d2.tmp && mv -f .main.o.d2.tmp .main.o.d2
+/build/xen/tools/console/client/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/lib/xen/bin
+/build/xen/tools/console/client/../../../tools/cross-install -m0755 -p xenconsole /build/xen/dist/install/usr/local/lib/xen/bin
+make[7]: Leaving directory '/build/xen/tools/console/client'
+make[6]: Leaving directory '/build/xen/tools/console'
+make[5]: Leaving directory '/build/xen/tools/console'
+make[4]: Leaving directory '/build/xen/tools'
+make[4]: Entering directory '/build/xen/tools'
+make -C xenmon install
+make[5]: Entering directory '/build/xen/tools/xenmon'
+sed "s!\(^\| \)$PWD/! !" .setmask.o.d >.setmask.o.d2.tmp && mv -f .setmask.o.d2.tmp .setmask.o.d2
+sed "s!\(^\| \)$PWD/! !" .xenbaked.o.d >.xenbaked.o.d2.tmp && mv -f .xenbaked.o.d2.tmp .xenbaked.o.d2
+/build/xen/tools/xenmon/../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/sbin
+/build/xen/tools/xenmon/../../tools/cross-install -m0755 -p xenbaked /build/xen/dist/install/usr/local/sbin/xenbaked
+/build/xen/tools/xenmon/../../tools/cross-install -m0755 -p xentrace_setmask  /build/xen/dist/install/usr/local/sbin/xentrace_setmask
+/build/xen/tools/xenmon/../../tools/python/install-wrap "/usr/bin/python3 -s" /build/xen/tools/xenmon/../../tools/cross-install -m0755 -p xenmon.py  /build/xen/dist/install/usr/local/sbin/xenmon
+make[5]: Leaving directory '/build/xen/tools/xenmon'
+make[4]: Leaving directory '/build/xen/tools'
+make[4]: Entering directory '/build/xen/tools'
+make -C xentop install
+make[5]: Entering directory '/build/xen/tools/xentop'
+sed "s!\(^\| \)$PWD/! !" .xentop.o.d >.xentop.o.d2.tmp && mv -f .xentop.o.d2.tmp .xentop.o.d2
+/build/xen/tools/xentop/../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/sbin
+/build/xen/tools/xentop/../../tools/cross-install -m0755 -p xentop /build/xen/dist/install/usr/local/sbin
+make[5]: Leaving directory '/build/xen/tools/xentop'
+make[4]: Leaving directory '/build/xen/tools'
+make[4]: Entering directory '/build/xen/tools'
+make -C libfsimage install
+make[5]: Entering directory '/build/xen/tools/libfsimage'
+make[6]: Entering directory '/build/xen/tools/libfsimage'
+make -C common install
+make[7]: Entering directory '/build/xen/tools/libfsimage/common'
+sed "s!\(^\| \)$PWD/! !" .fsimage.opic.d >.fsimage.opic.d2.tmp && mv -f .fsimage.opic.d2.tmp .fsimage.opic.d2
+sed "s!\(^\| \)$PWD/! !" .fsimage_grub.opic.d >.fsimage_grub.opic.d2.tmp && mv -f .fsimage_grub.opic.d2.tmp .fsimage_grub.opic.d2
+sed "s!\(^\| \)$PWD/! !" .fsimage_plugin.opic.d >.fsimage_plugin.opic.d2.tmp && mv -f .fsimage_plugin.opic.d2.tmp .fsimage_plugin.opic.d2
+/build/xen/tools/libfsimage/common/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/lib
+/build/xen/tools/libfsimage/common/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/include
+/build/xen/tools/libfsimage/common/../../../tools/cross-install -m0755 -p libxenfsimage.so.4.18.0 /build/xen/dist/install/usr/local/lib
+ln -sf libxenfsimage.so.4.18.0 /build/xen/dist/install/usr/local/lib/libxenfsimage.so.4.18
+ln -sf libxenfsimage.so.4.18 /build/xen/dist/install/usr/local/lib/libxenfsimage.so
+/build/xen/tools/libfsimage/common/../../../tools/cross-install -m0644 -p xenfsimage.h /build/xen/dist/install/usr/local/include
+/build/xen/tools/libfsimage/common/../../../tools/cross-install -m0644 -p xenfsimage_plugin.h /build/xen/dist/install/usr/local/include
+/build/xen/tools/libfsimage/common/../../../tools/cross-install -m0644 -p xenfsimage_grub.h /build/xen/dist/install/usr/local/include
+make[7]: Leaving directory '/build/xen/tools/libfsimage/common'
+make[6]: Leaving directory '/build/xen/tools/libfsimage'
+make[6]: Entering directory '/build/xen/tools/libfsimage'
+make -C ufs install
+make[7]: Entering directory '/build/xen/tools/libfsimage/ufs'
+sed "s!\(^\| \)$PWD/! !" .fsys_ufs.opic.d >.fsys_ufs.opic.d2.tmp && mv -f .fsys_ufs.opic.d2.tmp .fsys_ufs.opic.d2
+/build/xen/tools/libfsimage/ufs/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/lib/xenfsimage/ufs
+/build/xen/tools/libfsimage/ufs/../../../tools/cross-install -m0755 -p fsimage.so /build/xen/dist/install/usr/local/lib/xenfsimage/ufs
+make[7]: Leaving directory '/build/xen/tools/libfsimage/ufs'
+make[6]: Leaving directory '/build/xen/tools/libfsimage'
+make[6]: Entering directory '/build/xen/tools/libfsimage'
+make -C reiserfs install
+make[7]: Entering directory '/build/xen/tools/libfsimage/reiserfs'
+sed "s!\(^\| \)$PWD/! !" .fsys_reiserfs.opic.d >.fsys_reiserfs.opic.d2.tmp && mv -f .fsys_reiserfs.opic.d2.tmp .fsys_reiserfs.opic.d2
+/build/xen/tools/libfsimage/reiserfs/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/lib/xenfsimage/reiserfs
+/build/xen/tools/libfsimage/reiserfs/../../../tools/cross-install -m0755 -p fsimage.so /build/xen/dist/install/usr/local/lib/xenfsimage/reiserfs
+make[7]: Leaving directory '/build/xen/tools/libfsimage/reiserfs'
+make[6]: Leaving directory '/build/xen/tools/libfsimage'
+make[6]: Entering directory '/build/xen/tools/libfsimage'
+make -C iso9660 install
+make[7]: Entering directory '/build/xen/tools/libfsimage/iso9660'
+sed "s!\(^\| \)$PWD/! !" .fsys_iso9660.opic.d >.fsys_iso9660.opic.d2.tmp && mv -f .fsys_iso9660.opic.d2.tmp .fsys_iso9660.opic.d2
+/build/xen/tools/libfsimage/iso9660/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/lib/xenfsimage/iso9660
+/build/xen/tools/libfsimage/iso9660/../../../tools/cross-install -m0755 -p fsimage.so /build/xen/dist/install/usr/local/lib/xenfsimage/iso9660
+make[7]: Leaving directory '/build/xen/tools/libfsimage/iso9660'
+make[6]: Leaving directory '/build/xen/tools/libfsimage'
+make[6]: Entering directory '/build/xen/tools/libfsimage'
+make -C fat install
+make[7]: Entering directory '/build/xen/tools/libfsimage/fat'
+sed "s!\(^\| \)$PWD/! !" .fsys_fat.opic.d >.fsys_fat.opic.d2.tmp && mv -f .fsys_fat.opic.d2.tmp .fsys_fat.opic.d2
+/build/xen/tools/libfsimage/fat/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/lib/xenfsimage/fat
+/build/xen/tools/libfsimage/fat/../../../tools/cross-install -m0755 -p fsimage.so /build/xen/dist/install/usr/local/lib/xenfsimage/fat
+make[7]: Leaving directory '/build/xen/tools/libfsimage/fat'
+make[6]: Leaving directory '/build/xen/tools/libfsimage'
+make[6]: Entering directory '/build/xen/tools/libfsimage'
+make -C zfs install
+make[7]: Entering directory '/build/xen/tools/libfsimage/zfs'
+sed "s!\(^\| \)$PWD/! !" .fsi_zfs.opic.d >.fsi_zfs.opic.d2.tmp && mv -f .fsi_zfs.opic.d2.tmp .fsi_zfs.opic.d2
+sed "s!\(^\| \)$PWD/! !" .fsys_zfs.opic.d >.fsys_zfs.opic.d2.tmp && mv -f .fsys_zfs.opic.d2.tmp .fsys_zfs.opic.d2
+sed "s!\(^\| \)$PWD/! !" .zfs_fletcher.opic.d >.zfs_fletcher.opic.d2.tmp && mv -f .zfs_fletcher.opic.d2.tmp .zfs_fletcher.opic.d2
+sed "s!\(^\| \)$PWD/! !" .zfs_lzjb.opic.d >.zfs_lzjb.opic.d2.tmp && mv -f .zfs_lzjb.opic.d2.tmp .zfs_lzjb.opic.d2
+sed "s!\(^\| \)$PWD/! !" .zfs_sha256.opic.d >.zfs_sha256.opic.d2.tmp && mv -f .zfs_sha256.opic.d2.tmp .zfs_sha256.opic.d2
+/build/xen/tools/libfsimage/zfs/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/lib/xenfsimage/zfs
+/build/xen/tools/libfsimage/zfs/../../../tools/cross-install -m0755 -p fsimage.so /build/xen/dist/install/usr/local/lib/xenfsimage/zfs
+make[7]: Leaving directory '/build/xen/tools/libfsimage/zfs'
+make[6]: Leaving directory '/build/xen/tools/libfsimage'
+make[6]: Entering directory '/build/xen/tools/libfsimage'
+make -C ext2fs install
+make[7]: Entering directory '/build/xen/tools/libfsimage/ext2fs'
+sed "s!\(^\| \)$PWD/! !" .fsys_ext2fs.opic.d >.fsys_ext2fs.opic.d2.tmp && mv -f .fsys_ext2fs.opic.d2.tmp .fsys_ext2fs.opic.d2
+/build/xen/tools/libfsimage/ext2fs/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/lib/xenfsimage/ext2fs
+/build/xen/tools/libfsimage/ext2fs/../../../tools/cross-install -m0755 -p fsimage.so /build/xen/dist/install/usr/local/lib/xenfsimage/ext2fs
+make[7]: Leaving directory '/build/xen/tools/libfsimage/ext2fs'
+make[6]: Leaving directory '/build/xen/tools/libfsimage'
+make[5]: Leaving directory '/build/xen/tools/libfsimage'
+make[4]: Leaving directory '/build/xen/tools'
+make[4]: Entering directory '/build/xen/tools'
+make -C vchan install
+make[5]: Entering directory '/build/xen/tools/vchan'
+sed "s!\(^\| \)$PWD/! !" .node-select.o.d >.node-select.o.d2.tmp && mv -f .node-select.o.d2.tmp .node-select.o.d2
+sed "s!\(^\| \)$PWD/! !" .node.o.d >.node.o.d2.tmp && mv -f .node.o.d2.tmp .node.o.d2
+sed "s!\(^\| \)$PWD/! !" .vchan-socket-proxy.o.d >.vchan-socket-proxy.o.d2.tmp && mv -f .vchan-socket-proxy.o.d2.tmp .vchan-socket-proxy.o.d2
+/build/xen/tools/vchan/../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/bin
+/build/xen/tools/vchan/../../tools/cross-install -m0755 -p vchan-socket-proxy /build/xen/dist/install/usr/local/bin
+make[5]: Leaving directory '/build/xen/tools/vchan'
+make[4]: Leaving directory '/build/xen/tools'
+make[4]: Entering directory '/build/xen/tools'
+make -C xenpmd install
+make[5]: Entering directory '/build/xen/tools/xenpmd'
+sed "s!\(^\| \)$PWD/! !" .xenpmd.o.d >.xenpmd.o.d2.tmp && mv -f .xenpmd.o.d2.tmp .xenpmd.o.d2
+/build/xen/tools/xenpmd/../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/sbin
+/build/xen/tools/xenpmd/../../tools/cross-install -m0755 -p xenpmd /build/xen/dist/install/usr/local/sbin
+make[5]: Leaving directory '/build/xen/tools/xenpmd'
+make[4]: Leaving directory '/build/xen/tools'
+make[4]: Entering directory '/build/xen/tools'
+make -C xl install
+make[5]: Entering directory '/build/xen/tools/xl'
+sed "s!\(^\| \)$PWD/! !" .xl.o.d >.xl.o.d2.tmp && mv -f .xl.o.d2.tmp .xl.o.d2
+sed "s!\(^\| \)$PWD/! !" .xl_block.o.d >.xl_block.o.d2.tmp && mv -f .xl_block.o.d2.tmp .xl_block.o.d2
+sed "s!\(^\| \)$PWD/! !" .xl_cdrom.o.d >.xl_cdrom.o.d2.tmp && mv -f .xl_cdrom.o.d2.tmp .xl_cdrom.o.d2
+sed "s!\(^\| \)$PWD/! !" .xl_cmdtable.o.d >.xl_cmdtable.o.d2.tmp && mv -f .xl_cmdtable.o.d2.tmp .xl_cmdtable.o.d2
+sed "s!\(^\| \)$PWD/! !" .xl_console.o.d >.xl_console.o.d2.tmp && mv -f .xl_console.o.d2.tmp .xl_console.o.d2
+sed "s!\(^\| \)$PWD/! !" .xl_cpupool.o.d >.xl_cpupool.o.d2.tmp && mv -f .xl_cpupool.o.d2.tmp .xl_cpupool.o.d2
+sed "s!\(^\| \)$PWD/! !" .xl_flask.o.d >.xl_flask.o.d2.tmp && mv -f .xl_flask.o.d2.tmp .xl_flask.o.d2
+sed "s!\(^\| \)$PWD/! !" .xl_info.o.d >.xl_info.o.d2.tmp && mv -f .xl_info.o.d2.tmp .xl_info.o.d2
+sed "s!\(^\| \)$PWD/! !" .xl_mem.o.d >.xl_mem.o.d2.tmp && mv -f .xl_mem.o.d2.tmp .xl_mem.o.d2
+sed "s!\(^\| \)$PWD/! !" .xl_migrate.o.d >.xl_migrate.o.d2.tmp && mv -f .xl_migrate.o.d2.tmp .xl_migrate.o.d2
+sed "s!\(^\| \)$PWD/! !" .xl_misc.o.d >.xl_misc.o.d2.tmp && mv -f .xl_misc.o.d2.tmp .xl_misc.o.d2
+sed "s!\(^\| \)$PWD/! !" .xl_nic.o.d >.xl_nic.o.d2.tmp && mv -f .xl_nic.o.d2.tmp .xl_nic.o.d2
+sed "s!\(^\| \)$PWD/! !" .xl_parse.o.d >.xl_parse.o.d2.tmp && mv -f .xl_parse.o.d2.tmp .xl_parse.o.d2
+sed "s!\(^\| \)$PWD/! !" .xl_pci.o.d >.xl_pci.o.d2.tmp && mv -f .xl_pci.o.d2.tmp .xl_pci.o.d2
+sed "s!\(^\| \)$PWD/! !" .xl_saverestore.o.d >.xl_saverestore.o.d2.tmp && mv -f .xl_saverestore.o.d2.tmp .xl_saverestore.o.d2
+sed "s!\(^\| \)$PWD/! !" .xl_sched.o.d >.xl_sched.o.d2.tmp && mv -f .xl_sched.o.d2.tmp .xl_sched.o.d2
+sed "s!\(^\| \)$PWD/! !" .xl_sxp.o.d >.xl_sxp.o.d2.tmp && mv -f .xl_sxp.o.d2.tmp .xl_sxp.o.d2
+sed "s!\(^\| \)$PWD/! !" .xl_usb.o.d >.xl_usb.o.d2.tmp && mv -f .xl_usb.o.d2.tmp .xl_usb.o.d2
+sed "s!\(^\| \)$PWD/! !" .xl_utils.o.d >.xl_utils.o.d2.tmp && mv -f .xl_utils.o.d2.tmp .xl_utils.o.d2
+sed "s!\(^\| \)$PWD/! !" .xl_vcpu.o.d >.xl_vcpu.o.d2.tmp && mv -f .xl_vcpu.o.d2.tmp .xl_vcpu.o.d2
+sed "s!\(^\| \)$PWD/! !" .xl_vdispl.o.d >.xl_vdispl.o.d2.tmp && mv -f .xl_vdispl.o.d2.tmp .xl_vdispl.o.d2
+sed "s!\(^\| \)$PWD/! !" .xl_vkb.o.d >.xl_vkb.o.d2.tmp && mv -f .xl_vkb.o.d2.tmp .xl_vkb.o.d2
+sed "s!\(^\| \)$PWD/! !" .xl_vmcontrol.o.d >.xl_vmcontrol.o.d2.tmp && mv -f .xl_vmcontrol.o.d2.tmp .xl_vmcontrol.o.d2
+sed "s!\(^\| \)$PWD/! !" .xl_vsnd.o.d >.xl_vsnd.o.d2.tmp && mv -f .xl_vsnd.o.d2.tmp .xl_vsnd.o.d2
+sed "s!\(^\| \)$PWD/! !" .xl_vtpm.o.d >.xl_vtpm.o.d2.tmp && mv -f .xl_vtpm.o.d2.tmp .xl_vtpm.o.d2
+/build/xen/tools/xl/../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/sbin
+/build/xen/tools/xl/../../tools/cross-install -d -m0755 -p /build/xen/dist/install/etc/bash_completion.d
+/build/xen/tools/xl/../../tools/cross-install -m0755 -p xl /build/xen/dist/install/usr/local/sbin
+/build/xen/tools/xl/../../tools/cross-install -m0644 -p bash-completion /build/xen/dist/install/etc/bash_completion.d/xl
+make[5]: Leaving directory '/build/xen/tools/xl'
+make[4]: Leaving directory '/build/xen/tools'
+make[4]: Entering directory '/build/xen/tools'
+make -C helpers install
+make[5]: Entering directory '/build/xen/tools/helpers'
+/build/xen/tools/helpers/../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/lib/xen/bin
+for i in xen-init-dom0; do /build/xen/tools/helpers/../../tools/cross-install -m0755 -p $i /build/xen/dist/install/usr/local/lib/xen/bin; done
+make[5]: Leaving directory '/build/xen/tools/helpers'
+make[4]: Leaving directory '/build/xen/tools'
+make[4]: Entering directory '/build/xen/tools'
+make -C tests install
+make[5]: Entering directory '/build/xen/tools/tests'
+make[6]: Entering directory '/build/xen/tools/tests'
+make -C resource install
+make[7]: Entering directory '/build/xen/tools/tests/resource'
+sed "s!\(^\| \)$PWD/! !" .test-resource.o.d >.test-resource.o.d2.tmp && mv -f .test-resource.o.d2.tmp .test-resource.o.d2
+/build/xen/tools/tests/resource/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/lib/xen/bin
+/build/xen/tools/tests/resource/../../../tools/cross-install -m0755 -p test-resource /build/xen/dist/install/usr/local/lib/xen/bin
+make[7]: Leaving directory '/build/xen/tools/tests/resource'
+make[6]: Leaving directory '/build/xen/tools/tests'
+make[6]: Entering directory '/build/xen/tools/tests'
+make -C xenstore install
+make[7]: Entering directory '/build/xen/tools/tests/xenstore'
+sed "s!\(^\| \)$PWD/! !" .test-xenstore.o.d >.test-xenstore.o.d2.tmp && mv -f .test-xenstore.o.d2.tmp .test-xenstore.o.d2
+/build/xen/tools/tests/xenstore/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/lib/xen/bin
+/build/xen/tools/tests/xenstore/../../../tools/cross-install -m0755 -p test-xenstore /build/xen/dist/install/usr/local/lib/xen/bin
+make[7]: Leaving directory '/build/xen/tools/tests/xenstore'
+make[6]: Leaving directory '/build/xen/tools/tests'
+make[6]: Entering directory '/build/xen/tools/tests'
+make -C depriv install
+make[7]: Entering directory '/build/xen/tools/tests/depriv'
+sed "s!\(^\| \)$PWD/! !" .depriv-fd-checker.o.d >.depriv-fd-checker.o.d2.tmp && mv -f .depriv-fd-checker.o.d2.tmp .depriv-fd-checker.o.d2
+/build/xen/tools/tests/depriv/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/lib/xen/bin
+/build/xen/tools/tests/depriv/../../../tools/cross-install -m0755 -p depriv-fd-checker /build/xen/dist/install/usr/local/lib/xen/bin
+make[7]: Leaving directory '/build/xen/tools/tests/depriv'
+make[6]: Leaving directory '/build/xen/tools/tests'
+make[6]: Entering directory '/build/xen/tools/tests'
+make -C vpci install
+make[7]: Entering directory '/build/xen/tools/tests/vpci'
+make[7]: Nothing to be done for 'install'.
+make[7]: Leaving directory '/build/xen/tools/tests/vpci'
+make[6]: Leaving directory '/build/xen/tools/tests'
+make[6]: Entering directory '/build/xen/tools/tests'
+make -C paging-mempool install
+make[7]: Entering directory '/build/xen/tools/tests/paging-mempool'
+sed "s!\(^\| \)$PWD/! !" .test-paging-mempool.o.d >.test-paging-mempool.o.d2.tmp && mv -f .test-paging-mempool.o.d2.tmp .test-paging-mempool.o.d2
+/build/xen/tools/tests/paging-mempool/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/lib/xen/bin
+/build/xen/tools/tests/paging-mempool/../../../tools/cross-install -m0755 -p test-paging-mempool /build/xen/dist/install/usr/local/lib/xen/bin
+make[7]: Leaving directory '/build/xen/tools/tests/paging-mempool'
+make[6]: Leaving directory '/build/xen/tools/tests'
+make[5]: Leaving directory '/build/xen/tools/tests'
+make[4]: Leaving directory '/build/xen/tools'
+make[4]: Entering directory '/build/xen/tools'
+make -C python install
+make[5]: Entering directory '/build/xen/tools/python'
+sed "s!\(^\| \)$PWD/! !" .install.d >.install.d2.tmp && mv -f .install.d2.tmp .install.d2
+/build/xen/tools/python/../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/lib/xen/bin
+CC="riscv64-linux-gnu-gcc" CFLAGS="-DBUILD_ID -fno-strict-aliasing -std=gnu99 -Wall -Wstrict-prototypes -Wdeclaration-after-statement -Wno-unused-but-set-variable -Wno-unused-local-typedefs   -g3 -Werror -Og -fno-omit-frame-pointer -D__XEN_INTERFACE_VERSION__=__XEN_LATEST_INTERFACE_VERSION__ -MMD -MP -MF .install.d -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE   " LDSHARED="riscv64-linux-gnu-gcc" LDFLAGS="-shared " SHLIB_libxenctrl="    -Wl,-rpath-link=/build/xen/tools/python/../../tools/libs/call -Wl,-rpath-link=/build/xen/tools/python/../../tools/libs/devicemodel -Wl,-rpath-link=/build/xen/tools/python/../../tools/libs/evtchn -Wl,-rpath-link=/build/xen/tools/python/../../tools/libs/foreignmemory -Wl,-rpath-link=/build/xen/tools/python/../../tools/libs/gnttab -Wl,-rpath-link=/build/xen/tools/python/../../tools/libs/toolcore -Wl,-rpath-link=/build/xen/tools/python/../../tools/libs/toollog -Wl,-rpath-link=/build/xen/tools/python/../../tools/libs/ctrl" SHLIB_libxenguest="    -Wl,-rpath-link=/build/xen/tools/python/../../tools/libs/call -Wl,-rpath-link=/build/xen/tools/python/../../tools/libs/ctrl -Wl,-rpath-link=/build/xen/tools/python/../../tools/libs/devicemodel -Wl,-rpath-link=/build/xen/tools/python/../../tools/libs/evtchn -Wl,-rpath-link=/build/xen/tools/python/../../tools/libs/foreignmemory -Wl,-rpath-link=/build/xen/tools/python/../../tools/libs/gnttab -Wl,-rpath-link=/build/xen/tools/python/../../tools/libs/toolcore -Wl,-rpath-link=/build/xen/tools/python/../../tools/libs/toollog -Wl,-rpath-link=/build/xen/tools/python/../../tools/libs/guest" SHLIB_libxenstore="    -Wl,-rpath-link=/build/xen/tools/python/../../tools/libs/toolcore -Wl,-rpath-link=/build/xen/tools/python/../../tools/libs/store" python3 setup.py install --record build/installed_files.txt --prefix="/usr/local" \
+	--root="/build/xen/dist/install" --force
+/usr/lib/python3/dist-packages/setuptools/_distutils/cmd.py:90: SetuptoolsDeprecationWarning: setup.py install is deprecated.
+!!
+
+        ********************************************************************************
+        Please avoid running ``setup.py`` directly.
+        Instead, use pypa/build, pypa/installer or other
+        standards-based tools.
+
+        See https://blog.ganssle.io/articles/2021/10/setup-py-deprecated.html for details.
+        ********************************************************************************
+
+!!
+  self.initialize_options()
+/build/xen/tools/python/../../tools/python/install-wrap "/usr/bin/python3 -s" /build/xen/tools/python/../../tools/cross-install -m0755 -p scripts/convert-legacy-stream /build/xen/dist/install/usr/local/lib/xen/bin
+/build/xen/tools/python/../../tools/python/install-wrap "/usr/bin/python3 -s" /build/xen/tools/python/../../tools/cross-install -m0755 -p scripts/verify-stream-v2 /build/xen/dist/install/usr/local/lib/xen/bin
+make[5]: Leaving directory '/build/xen/tools/python'
+make[4]: Leaving directory '/build/xen/tools'
+make[4]: Entering directory '/build/xen/tools'
+make -C pygrub install
+make[5]: Entering directory '/build/xen/tools/pygrub'
+sed "s!\(^\| \)$PWD/! !" .build.d >.build.d2.tmp && mv -f .build.d2.tmp .build.d2
+CC="riscv64-linux-gnu-gcc" CFLAGS="-DBUILD_ID -fno-strict-aliasing -std=gnu99 -Wall -Wstrict-prototypes -Wdeclaration-after-statement -Wno-unused-but-set-variable -Wno-unused-local-typedefs   -g3 -Werror -Og -fno-omit-frame-pointer -D__XEN_INTERFACE_VERSION__=__XEN_LATEST_INTERFACE_VERSION__ -MMD -MP -MF .build.d -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE   " LDSHARED="riscv64-linux-gnu-gcc" LDFLAGS="-shared " python3 setup.py build
+/build/xen/tools/pygrub/../../tools/cross-install -d -m0755 -p /build/xen/dist/install//usr/local/bin
+/build/xen/tools/pygrub/../../tools/cross-install -d -m0755 -p /build/xen/dist/install//usr/local/lib/xen/bin
+CC="riscv64-linux-gnu-gcc" CFLAGS="-DBUILD_ID -fno-strict-aliasing -std=gnu99 -Wall -Wstrict-prototypes -Wdeclaration-after-statement -Wno-unused-but-set-variable -Wno-unused-local-typedefs   -g3 -Werror -Og -fno-omit-frame-pointer -D__XEN_INTERFACE_VERSION__=__XEN_LATEST_INTERFACE_VERSION__ -MMD -MP -MF .install.d -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE   " LDSHARED="riscv64-linux-gnu-gcc" LDFLAGS="-shared " python3 setup.py install --record build/installed_files.txt --prefix="/usr/local" \
+	--root="/build/xen/dist/install" --force
+/usr/lib/python3/dist-packages/setuptools/_distutils/cmd.py:90: SetuptoolsDeprecationWarning: setup.py install is deprecated.
+!!
+
+        ********************************************************************************
+        Please avoid running ``setup.py`` directly.
+        Instead, use pypa/build, pypa/installer or other
+        standards-based tools.
+
+        See https://blog.ganssle.io/articles/2021/10/setup-py-deprecated.html for details.
+        ********************************************************************************
+
+!!
+  self.initialize_options()
+/build/xen/tools/pygrub/../../tools/python/install-wrap "/usr/bin/python3 -s" /build/xen/tools/pygrub/../../tools/cross-install -m0755 -p src/pygrub /build/xen/dist/install//usr/local/lib/xen/bin/pygrub
+set -e; if [ /usr/local/bin != /usr/local/lib/xen/bin -a \
+             "`readlink -f /build/xen/dist/install//usr/local/bin`" != \
+             "`readlink -f /usr/local/lib/xen/bin`" ]; then \
+    ln -sf /usr/local/lib/xen/bin/pygrub /build/xen/dist/install//usr/local/bin; \
+fi
+make[5]: Leaving directory '/build/xen/tools/pygrub'
+make[4]: Leaving directory '/build/xen/tools'
+make[3]: Leaving directory '/build/xen/tools'
+make[2]: Leaving directory '/build/xen/tools'
+make[1]: Leaving directory '/build/xen'
