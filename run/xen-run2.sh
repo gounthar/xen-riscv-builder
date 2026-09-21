@@ -137,6 +137,20 @@ if [ "${TRACE:-0}" = "1" ]; then
     send 24 dumpreg  'xl debug-keys d'
     send 25 dumpirq  'xl debug-keys i'
     send 26 list3    'xl list'
+elif [ "${NETCHECK:-0}" = "1" ]; then
+    # Create WITHOUT -c so dom0's shell stays usable, then ping the guest
+    # from dom0 across xenbr0 while its payload runs. A reply needs both
+    # directions through netfront, netback and the bridge. The guest's own
+    # console output is not captured in this mode.
+    send 17 create   'xl create /domu/domu.cfg'
+    send 18 list1    'xl list'
+    send 19 wait1    'sleep 90; echo waited'
+    send 20 vifs     'brctl show xenbr0; ip -o link show | grep vif'
+    send 21 ping1    'ping -c 5 -W 5 192.168.128.2'
+    send 22 wait2    'sleep 60; echo waited'
+    send 23 ping2    'ping -c 5 -W 5 192.168.128.2'
+    send 24 vifstat  'ip -s link show vif1.0'
+    send 25 list2    'xl list'
 else
     printf 'xl create -c /domu/domu.cfg\n'
 fi
