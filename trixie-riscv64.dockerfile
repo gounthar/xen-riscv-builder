@@ -98,7 +98,8 @@ RUN mkdir -p lib && \
                /usr/lib/riscv64-linux-gnu/libyajl.so.2 \
                /usr/lib/riscv64-linux-gnu/libfdt.so.1 \
                /usr/lib/riscv64-linux-gnu/libm.so.6 \
-               /usr/lib/riscv64-linux-gnu/libtinfo.so.6; do \
+               /usr/lib/riscv64-linux-gnu/libtinfo.so.6 \
+               /usr/lib/riscv64-linux-gnu/libgcc_s.so.1; do \
         cp "$lib" ./lib/; \
     done
 
