@@ -92,7 +92,14 @@ send 13 showcfg2 'cat /domu/domu.cfg'
 # The block hotplug script's claim_lock (locking.sh) loops forever unless
 # `stat -L /dev/stdin` works, and devtmpfs does not create the /dev/fd family
 # (udev or mdev normally do). Found in run 23 by tracing the script.
+# RCS_DEVFIX=1: the dom0 image's rcS makes these links and mounts devpts
+# itself (builder Makefile, initrd-tools), so skip 13v and 14a and only
+# look. That is the run that proves the rcS fix, not the driver.
+if [ "${RCS_DEVFIX:-0}" = 1 ]; then
+send 13v devfdcheck 'ls -l /dev/stdin /dev/fd'
+else
 send 13v devfd 'ln -sfn /proc/self/fd /dev/fd; ln -sf /proc/self/fd/0 /dev/stdin; ln -sf /proc/self/fd/1 /dev/stdout; ln -sf /proc/self/fd/2 /dev/stderr; ls -l /dev/stdin'
+fi
 # vif-bridge is the same hotplug machinery that hung on block, so a tool that
 # is missing or a lock that blocks will show up here too.
 send 14 tools 'command -v bash losetup flock xenstore-read xenstore-write xenstore-list'
@@ -102,7 +109,7 @@ send 14 tools 'command -v bash losetup flock xenstore-read xenstore-write xensto
 # "xenconsoled: Failed to create tty for domain-1 (errno = 2)" and libxl then
 # timed out waiting for a console node that was never going to appear.
 # CONFIG_UNIX98_PTYS=y in the dom0 kernel, so this is purely a missing mount.
-send 14a devpts 'mkdir -p /dev/pts && mount -t devpts devpts /dev/pts'
+[ "${RCS_DEVFIX:-0}" = 1 ] || send 14a devpts 'mkdir -p /dev/pts && mount -t devpts devpts /dev/pts'
 send 14b ptscheck 'ls -ld /dev/pts && ls -l /dev/ptmx'
 
 # libxl waits for /local/domain/N/console/tty to appear and times out without it

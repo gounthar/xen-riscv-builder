@@ -147,6 +147,12 @@ initrd : $(INITRD_STAMP) create-common-dirs
 	sh $(LIBCHECK) $(INITRD_DIR)
 	genext2fs -b 6500 -N 1024 -U -d $(INITRD_DIR)/ $(INITRD)
 
+# The kernel mounts a bare devtmpfs on /dev, which has neither the
+# /dev/fd family (udev or mdev would create those) nor devpts, and it
+# hides anything placed under /dev in the image, so both are made at
+# boot. locking.sh's claim_lock stats /dev/stdin to check it holds the
+# lock; without the link it retries forever and every block hotplug
+# times out. xenconsoled calls openpty(), which needs a mounted devpts.
 initrd-tools: dist-tools create-tools-dirs
 	echo "Building initrd with tools image"
 	cd $(XEN_ROOT)/dist && tar --exclude='*.a' -cf - . \
@@ -158,6 +164,12 @@ initrd-tools: dist-tools create-tools-dirs
 	'mount -t proc proc /proc' \
 	'mount -t xenfs xenfs /proc/xen' \
 	'mount -t sysfs sysfs /sys' \
+	'ln -sfn /proc/self/fd /dev/fd' \
+	'ln -sf /proc/self/fd/0 /dev/stdin' \
+	'ln -sf /proc/self/fd/1 /dev/stdout' \
+	'ln -sf /proc/self/fd/2 /dev/stderr' \
+	'mkdir -p /dev/pts' \
+	'mount -t devpts devpts /dev/pts' \
 	'./dist/install/usr/local/sbin/xenstored' \
 	'sleep 1' \
 	'./lib/xen/bin/xen-init-dom0' \
