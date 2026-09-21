@@ -1,0 +1,122 @@
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from trixie-riscv64.dockerfile
+#1 transferring dockerfile: 5.32kB done
+#1 DONE 0.0s
+
+#2 resolve image config for docker-image://docker.io/docker/dockerfile:1
+#2 ...
+
+#3 [auth] docker/dockerfile:pull token for registry-1.docker.io
+#3 DONE 0.0s
+
+#2 resolve image config for docker-image://docker.io/docker/dockerfile:1
+#2 DONE 0.9s
+
+#4 docker-image://docker.io/docker/dockerfile:1@sha256:ecfaec9ed6d810b56388c508f4121597bfbba70d41a6dfeee4d8cad5f295fc32
+#4 resolve docker.io/docker/dockerfile:1@sha256:ecfaec9ed6d810b56388c508f4121597bfbba70d41a6dfeee4d8cad5f295fc32 0.1s done
+#4 CACHED
+
+#5 [internal] load metadata for registry.gitlab.com/xen-project/people/olkur/xen/tests-artifacts/qemu-system-riscv64:8.2.0-aia-riscv64
+#5 ...
+
+#6 [auth] library/debian:pull token for registry-1.docker.io
+#6 DONE 0.0s
+
+#7 [internal] load metadata for docker.io/library/debian:trixie-slim
+#7 DONE 0.7s
+
+#5 [internal] load metadata for registry.gitlab.com/xen-project/people/olkur/xen/tests-artifacts/qemu-system-riscv64:8.2.0-aia-riscv64
+#5 DONE 0.9s
+
+#8 [internal] load .dockerignore
+#8 transferring context: 151B done
+#8 DONE 0.0s
+
+#9 [internal] load build context
+#9 DONE 0.0s
+
+#10 [internal] preparing inline document
+#10 DONE 0.0s
+
+#11 FROM registry.gitlab.com/xen-project/people/olkur/xen/tests-artifacts/qemu-system-riscv64:8.2.0-aia-riscv64@sha256:c81104de7e8d34eac8dc9f35d6b136cb423970657fca1cb3ed9d09c966522895
+#11 resolve registry.gitlab.com/xen-project/people/olkur/xen/tests-artifacts/qemu-system-riscv64:8.2.0-aia-riscv64@sha256:c81104de7e8d34eac8dc9f35d6b136cb423970657fca1cb3ed9d09c966522895
+#11 ...
+
+#12 [busybox-builder 1/4] FROM docker.io/library/debian:trixie-slim@sha256:a99cfc517144bc59b1978475ec53b46ecabec7e43635402ee5b77cc54cd1b20a
+#12 resolve docker.io/library/debian:trixie-slim@sha256:a99cfc517144bc59b1978475ec53b46ecabec7e43635402ee5b77cc54cd1b20a 0.1s done
+#12 DONE 0.1s
+
+#13 [stage-1  4/14] WORKDIR /build/initrd
+#13 CACHED
+
+#14 [busybox-builder 2/4] RUN apt-get update &&     apt-get install -y --no-install-recommends         build-essential         gcc-riscv64-linux-gnu         libc6-dev-riscv64-cross         make         curl         ca-certificates         bzip2 &&     rm -rf /var/lib/apt/lists/*
+#14 CACHED
+
+#15 [busybox-builder 3/4] WORKDIR /busybox
+#15 CACHED
+
+#16 [busybox-builder 4/4] RUN     curl -fsSLO https://busybox.net/downloads/busybox-1.36.1.tar.bz2 &&     tar -xf busybox-1.36.1.tar.bz2 -C /busybox --strip-components=1 &&     cd /busybox &&     make defconfig &&     sed "/CONFIG_STATIC\b/s/.*/CONFIG_STATIC=y/" -i .config &&     sed -i 's/CONFIG_TC=y/# CONFIG_TC is not set/' .config &&     make -j$(grep -c '^processor' /proc/cpuinfo) &&     make install CONFIG_PREFIX=/busybox-install
+#16 CACHED
+
+#17 [stage-1  2/14] WORKDIR /build
+#17 CACHED
+
+#18 [stage-1  3/14] RUN <<EOF (#!/bin/bash...)
+#18 CACHED
+
+#19 [stage-1  5/14] COPY --from=busybox-builder /busybox-install .
+#19 CACHED
+
+#11 FROM registry.gitlab.com/xen-project/people/olkur/xen/tests-artifacts/qemu-system-riscv64:8.2.0-aia-riscv64@sha256:c81104de7e8d34eac8dc9f35d6b136cb423970657fca1cb3ed9d09c966522895
+#11 resolve registry.gitlab.com/xen-project/people/olkur/xen/tests-artifacts/qemu-system-riscv64:8.2.0-aia-riscv64@sha256:c81104de7e8d34eac8dc9f35d6b136cb423970657fca1cb3ed9d09c966522895 0.1s done
+#11 CACHED
+
+#9 [internal] load build context
+#9 transferring context: 20.06kB done
+#9 DONE 0.1s
+
+#20 [stage-1  6/14] RUN mkdir -p lib &&     for lib in /usr/lib/ld-linux-riscv64-lp64d.so.1                /usr/lib/riscv64-linux-gnu/libc.so.6                /usr/lib/riscv64-linux-gnu/libuuid.so.1                /usr/lib/riscv64-linux-gnu/libncurses.so.6                /usr/lib/riscv64-linux-gnu/libz.so.1                /usr/lib/riscv64-linux-gnu/libyajl.so.2                /usr/lib/riscv64-linux-gnu/libfdt.so.1                /usr/lib/riscv64-linux-gnu/libm.so.6                /usr/lib/riscv64-linux-gnu/libtinfo.so.6; do         cp "$lib" ./lib/;     done
+#20 DONE 0.4s
+
+#21 [stage-1  7/14] WORKDIR /build
+#21 DONE 0.1s
+
+#22 [stage-1  8/14] RUN mkdir -p /tmp/domu-initrd/bin /tmp/domu-initrd/sbin              /tmp/domu-initrd/proc /tmp/domu-initrd/sys              /tmp/domu-initrd/dev /tmp/domu-initrd/etc/init.d &&     cp -a /build/initrd/bin/busybox /tmp/domu-initrd/bin/ &&     /tmp/domu-initrd/bin/busybox --install -s /tmp/domu-initrd/bin/ &&     printf '%s\n'         '#!/bin/sh'         'mount -t proc proc /proc'         'mount -t sysfs sysfs /sys'         'echo "domU booted!"'         'exec /bin/sh'     > /tmp/domu-initrd/etc/init.d/rcS &&     chmod +x /tmp/domu-initrd/etc/init.d/rcS &&     mkdir -p /build/domu-initrd &&     genext2fs -b 4096 -N 512 -U -d /tmp/domu-initrd/ /build/domu-initrd/domu-initrd.img &&     rm -rf /tmp/domu-initrd
+#22 0.352 copying from directory /tmp/domu-initrd/
+#22 DONE 0.4s
+
+#23 [stage-1  9/14] RUN touch /bin/Image.gz
+#23 DONE 0.4s
+
+#24 [stage-1 10/14] COPY --from=registry.gitlab.com/xen-project/people/olkur/xen/tests-artifacts/qemu-system-riscv64:8.2.0-aia-riscv64     /qemu-system-riscv64 /opensbi-riscv64-generic-fw_dynamic.bin /bin/
+#24 DONE 0.3s
+
+#25 [stage-1 11/14] COPY config_tools.status config_xen.status xl.conf domu.cfg /build/configs/
+#25 DONE 0.2s
+
+#26 [stage-1 12/14] COPY Makefile .
+#26 DONE 0.1s
+
+#27 [stage-1 13/14] COPY generate_dtb.sh /build/dtb/
+#27 DONE 0.2s
+
+#28 [stage-1 14/14] RUN chmod -R 755 /bin && chown -R user:user /build
+#28 DONE 4.3s
+
+#29 exporting to image
+#29 exporting layers
+#29 exporting layers 1.8s done
+#29 exporting manifest sha256:17c5c611caf0461cd26460efeb8c02f2384f0df03bce09606cc0dd02a9bf1062 0.1s done
+#29 exporting config sha256:f25f59ab888a31c25e411d364d65927de7ccd15291c5080c420dceacf95e7c48 0.1s done
+#29 exporting attestation manifest sha256:7a4899f3b55def50ac6fed1315d72c458d25fedcb3aa1b363a45ae4f74493dca 0.1s done
+#29 exporting manifest list sha256:b877a7c2b2ad5e06a4119e05f4845607f5d58cdf18c87463484148ed44d23789
+#29 exporting manifest list sha256:b877a7c2b2ad5e06a4119e05f4845607f5d58cdf18c87463484148ed44d23789 0.0s done
+#29 naming to docker.io/local/trixie-riscv64:latest done
+#29 unpacking to docker.io/local/trixie-riscv64:latest
+#29 unpacking to docker.io/local/trixie-riscv64:latest 0.7s done
+#29 DONE 2.9s
+
+ [33m2 warnings found (use docker --debug to expand):
+[0m - FromPlatformFlagConstDisallowed: FROM --platform flag should not use constant value "linux/amd64" (line 31)
+ - FromPlatformFlagConstDisallowed: FROM --platform flag should not use constant value "linux/amd64" (line 2)

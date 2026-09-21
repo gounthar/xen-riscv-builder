@@ -1,0 +1,693 @@
+cp /tmp/cfg/config_xen.status /build/xen/config.status && cd /build/xen && bash ./config.status && cp /tmp/cfg/config_tools.status /build/xen/tools/config.status && cd /build/xen/tools && bash ./config.status
+config.status: creating config/Toplevel.mk
+config.status: creating config/Paths.mk
+config.status: creating ../config/Tools.mk
+config.status: creating hotplug/common/hotplugpath.sh
+config.status: creating hotplug/FreeBSD/rc.d/xencommons
+config.status: creating hotplug/FreeBSD/rc.d/xendriverdomain
+config.status: creating hotplug/Linux/init.d/sysconfig.xencommons
+config.status: creating hotplug/Linux/init.d/sysconfig.xendomains
+config.status: creating hotplug/Linux/init.d/xen-watchdog
+config.status: creating hotplug/Linux/init.d/xencommons
+config.status: creating hotplug/Linux/init.d/xendomains
+config.status: creating hotplug/Linux/init.d/xendriverdomain
+config.status: creating hotplug/Linux/launch-xenstore
+config.status: creating hotplug/Linux/vif-setup
+config.status: creating hotplug/Linux/xen-hotplug-common.sh
+config.status: creating hotplug/Linux/xendomains
+config.status: creating hotplug/NetBSD/rc.d/xencommons
+config.status: creating hotplug/NetBSD/rc.d/xendriverdomain
+config.status: creating ocaml/libs/xs/paths.ml
+config.status: creating ocaml/xenstored/paths.ml
+config.status: creating ocaml/xenstored/oxenstored.conf
+config.status: creating config.h
+config.status: config.h is unchanged
+make -C /build/xen -j20 dist-tools
+make[1]: Entering directory '/build/xen'
+make -C tools/include install
+make[2]: Entering directory '/build/xen/tools/include'
+make -C xen-foreign
+make[3]: Entering directory '/build/xen/tools/include/xen-foreign'
+mkdir -p xen/libelf acpi
+find xen/ acpi/ -type l -exec rm '{}' +
+sed -e 's#@includedir@#/usr/local/include/xen#g' xen.COPYING.in > xen/COPYING
+ln -s /build/xen/tools/include/../../xen/include/public/*.h xen/
+ln -s /build/xen/tools/include/../../xen/include/public/*/ xen/
+ln -s ../xen-sys/Linux xen/sys
+ln -s /build/xen/tools/include/../../xen/include/xen/libelf.h /build/xen/tools/include/../../xen/include/xen/elfstructs.h xen/libelf/
+ln -s ../xen-foreign xen/foreign
+ln -s /build/xen/tools/include/../../xen/include/acpi/platform acpi/
+ln -s /build/xen/tools/include/../../xen/include/acpi/ac*.h acpi/
+./checker > tmp.size
+diff -u reference.size tmp.size
+rm tmp.size
+make[3]: Leaving directory '/build/xen/tools/include/xen-foreign'
+/build/xen/tools/include/../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/include/xen/arch-x86
+/build/xen/tools/include/../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/include/xen/arch-x86/hvm
+/build/xen/tools/include/../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/include/xen/arch-arm
+/build/xen/tools/include/../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/include/xen/arch-arm/hvm
+/build/xen/tools/include/../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/include/xen/arch-riscv
+/build/xen/tools/include/../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/include/xen/arch-riscv/hvm
+/build/xen/tools/include/../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/include/xen/foreign
+/build/xen/tools/include/../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/include/xen/hvm
+/build/xen/tools/include/../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/include/xen/io
+/build/xen/tools/include/../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/include/xen/sys
+/build/xen/tools/include/../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/include/xen/xsm
+/build/xen/tools/include/../../tools/cross-install -m0644 -p xen/COPYING /build/xen/dist/install/usr/local/include/xen
+/build/xen/tools/include/../../tools/cross-install -m0644 -p xen/*.h /build/xen/dist/install/usr/local/include/xen
+/build/xen/tools/include/../../tools/cross-install -m0644 -p xen/arch-x86/*.h /build/xen/dist/install/usr/local/include/xen/arch-x86
+/build/xen/tools/include/../../tools/cross-install -m0644 -p xen/arch-x86/hvm/*.h /build/xen/dist/install/usr/local/include/xen/arch-x86/hvm
+/build/xen/tools/include/../../tools/cross-install -m0644 -p xen/arch-arm/*.h /build/xen/dist/install/usr/local/include/xen/arch-arm
+/build/xen/tools/include/../../tools/cross-install -m0644 -p xen/arch-arm/hvm/*.h /build/xen/dist/install/usr/local/include/xen/arch-arm/hvm
+/build/xen/tools/include/../../tools/cross-install -m0644 -p xen/arch-riscv/hvm/*.h /build/xen/dist/install/usr/local/include/xen/arch-riscv/hvm
+/build/xen/tools/include/../../tools/cross-install -m0644 -p xen/foreign/*.h /build/xen/dist/install/usr/local/include/xen/foreign
+/build/xen/tools/include/../../tools/cross-install -m0644 -p xen/hvm/*.h /build/xen/dist/install/usr/local/include/xen/hvm
+/build/xen/tools/include/../../tools/cross-install -m0644 -p xen/io/*.h /build/xen/dist/install/usr/local/include/xen/io
+/build/xen/tools/include/../../tools/cross-install -m0644 -p xen/sys/*.h /build/xen/dist/install/usr/local/include/xen/sys
+/build/xen/tools/include/../../tools/cross-install -m0644 -p xen/xsm/*.h /build/xen/dist/install/usr/local/include/xen/xsm
+/build/xen/tools/include/../../tools/cross-install -m0644 -p xen_list.h /build/xen/dist/install/usr/local/include
+make[2]: Leaving directory '/build/xen/tools/include'
+make -C tools install
+make[2]: Entering directory '/build/xen/tools'
+/build/xen/tools/../tools/cross-install -d -m0755 -p -m 700 /build/xen/dist/install/var/lib/xen/dump
+/build/xen/tools/../tools/cross-install -d -m0755 -p /build/xen/dist/install/var/log/xen
+/build/xen/tools/../tools/cross-install -d -m0755 -p /build/xen/dist/install/var/lib/xen
+/build/xen/tools/../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/lib/pkgconfig
+make subdirs-install
+make[3]: Entering directory '/build/xen/tools'
+make[4]: Entering directory '/build/xen/tools'
+make -C libs install
+make[5]: Entering directory '/build/xen/tools/libs'
+make[6]: Entering directory '/build/xen/tools/libs'
+make -C toolcore install
+make[7]: Entering directory '/build/xen/tools/libs/toolcore'
+/build/xen/tools/libs/toolcore/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/lib
+/build/xen/tools/libs/toolcore/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/include
+/build/xen/tools/libs/toolcore/../../../tools/cross-install -m0755 -p libxentoolcore.so.1.0 /build/xen/dist/install/usr/local/lib
+/build/xen/tools/libs/toolcore/../../../tools/cross-install -m0644 -p libxentoolcore.a /build/xen/dist/install/usr/local/lib
+ln -sf libxentoolcore.so.1.0 /build/xen/dist/install/usr/local/lib/libxentoolcore.so.1
+ln -sf libxentoolcore.so.1 /build/xen/dist/install/usr/local/lib/libxentoolcore.so
+for i in  /build/xen/tools/libs/toolcore/../../../tools/include/xentoolcore.h; do /build/xen/tools/libs/toolcore/../../../tools/cross-install -m0644 -p $i /build/xen/dist/install/usr/local/include; done
+/build/xen/tools/libs/toolcore/../../../tools/cross-install -m0644 -p xentoolcore.pc /build/xen/dist/install/usr/local/lib/pkgconfig
+make[7]: Leaving directory '/build/xen/tools/libs/toolcore'
+make[6]: Leaving directory '/build/xen/tools/libs'
+make[6]: Entering directory '/build/xen/tools/libs'
+make -C toollog install
+make[7]: Entering directory '/build/xen/tools/libs/toollog'
+/build/xen/tools/libs/toollog/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/lib
+/build/xen/tools/libs/toollog/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/include
+/build/xen/tools/libs/toollog/../../../tools/cross-install -m0755 -p libxentoollog.so.1.0 /build/xen/dist/install/usr/local/lib
+/build/xen/tools/libs/toollog/../../../tools/cross-install -m0644 -p libxentoollog.a /build/xen/dist/install/usr/local/lib
+ln -sf libxentoollog.so.1.0 /build/xen/dist/install/usr/local/lib/libxentoollog.so.1
+ln -sf libxentoollog.so.1 /build/xen/dist/install/usr/local/lib/libxentoollog.so
+for i in  /build/xen/tools/libs/toollog/../../../tools/include/xentoollog.h; do /build/xen/tools/libs/toollog/../../../tools/cross-install -m0644 -p $i /build/xen/dist/install/usr/local/include; done
+/build/xen/tools/libs/toollog/../../../tools/cross-install -m0644 -p xentoollog.pc /build/xen/dist/install/usr/local/lib/pkgconfig
+make[7]: Leaving directory '/build/xen/tools/libs/toollog'
+make[6]: Leaving directory '/build/xen/tools/libs'
+make[6]: Entering directory '/build/xen/tools/libs'
+make -C evtchn install
+make[7]: Entering directory '/build/xen/tools/libs/evtchn'
+/build/xen/tools/libs/evtchn/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/lib
+/build/xen/tools/libs/evtchn/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/include
+/build/xen/tools/libs/evtchn/../../../tools/cross-install -m0755 -p libxenevtchn.so.1.2 /build/xen/dist/install/usr/local/lib
+/build/xen/tools/libs/evtchn/../../../tools/cross-install -m0644 -p libxenevtchn.a /build/xen/dist/install/usr/local/lib
+ln -sf libxenevtchn.so.1.2 /build/xen/dist/install/usr/local/lib/libxenevtchn.so.1
+ln -sf libxenevtchn.so.1 /build/xen/dist/install/usr/local/lib/libxenevtchn.so
+for i in  /build/xen/tools/libs/evtchn/../../../tools/include/xenevtchn.h; do /build/xen/tools/libs/evtchn/../../../tools/cross-install -m0644 -p $i /build/xen/dist/install/usr/local/include; done
+/build/xen/tools/libs/evtchn/../../../tools/cross-install -m0644 -p xenevtchn.pc /build/xen/dist/install/usr/local/lib/pkgconfig
+make[7]: Leaving directory '/build/xen/tools/libs/evtchn'
+make[6]: Leaving directory '/build/xen/tools/libs'
+make[6]: Entering directory '/build/xen/tools/libs'
+make -C gnttab install
+make[7]: Entering directory '/build/xen/tools/libs/gnttab'
+/build/xen/tools/libs/gnttab/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/lib
+/build/xen/tools/libs/gnttab/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/include
+/build/xen/tools/libs/gnttab/../../../tools/cross-install -m0755 -p libxengnttab.so.1.2 /build/xen/dist/install/usr/local/lib
+/build/xen/tools/libs/gnttab/../../../tools/cross-install -m0644 -p libxengnttab.a /build/xen/dist/install/usr/local/lib
+ln -sf libxengnttab.so.1.2 /build/xen/dist/install/usr/local/lib/libxengnttab.so.1
+ln -sf libxengnttab.so.1 /build/xen/dist/install/usr/local/lib/libxengnttab.so
+for i in  /build/xen/tools/libs/gnttab/../../../tools/include/xengnttab.h; do /build/xen/tools/libs/gnttab/../../../tools/cross-install -m0644 -p $i /build/xen/dist/install/usr/local/include; done
+/build/xen/tools/libs/gnttab/../../../tools/cross-install -m0644 -p xengnttab.pc /build/xen/dist/install/usr/local/lib/pkgconfig
+make[7]: Leaving directory '/build/xen/tools/libs/gnttab'
+make[6]: Leaving directory '/build/xen/tools/libs'
+make[6]: Entering directory '/build/xen/tools/libs'
+make -C call install
+make[7]: Entering directory '/build/xen/tools/libs/call'
+/build/xen/tools/libs/call/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/lib
+/build/xen/tools/libs/call/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/include
+/build/xen/tools/libs/call/../../../tools/cross-install -m0755 -p libxencall.so.1.3 /build/xen/dist/install/usr/local/lib
+/build/xen/tools/libs/call/../../../tools/cross-install -m0644 -p libxencall.a /build/xen/dist/install/usr/local/lib
+ln -sf libxencall.so.1.3 /build/xen/dist/install/usr/local/lib/libxencall.so.1
+ln -sf libxencall.so.1 /build/xen/dist/install/usr/local/lib/libxencall.so
+for i in  /build/xen/tools/libs/call/../../../tools/include/xencall.h; do /build/xen/tools/libs/call/../../../tools/cross-install -m0644 -p $i /build/xen/dist/install/usr/local/include; done
+/build/xen/tools/libs/call/../../../tools/cross-install -m0644 -p xencall.pc /build/xen/dist/install/usr/local/lib/pkgconfig
+make[7]: Leaving directory '/build/xen/tools/libs/call'
+make[6]: Leaving directory '/build/xen/tools/libs'
+make[6]: Entering directory '/build/xen/tools/libs'
+make -C foreignmemory install
+make[7]: Entering directory '/build/xen/tools/libs/foreignmemory'
+/build/xen/tools/libs/foreignmemory/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/lib
+/build/xen/tools/libs/foreignmemory/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/include
+/build/xen/tools/libs/foreignmemory/../../../tools/cross-install -m0755 -p libxenforeignmemory.so.1.4 /build/xen/dist/install/usr/local/lib
+/build/xen/tools/libs/foreignmemory/../../../tools/cross-install -m0644 -p libxenforeignmemory.a /build/xen/dist/install/usr/local/lib
+ln -sf libxenforeignmemory.so.1.4 /build/xen/dist/install/usr/local/lib/libxenforeignmemory.so.1
+ln -sf libxenforeignmemory.so.1 /build/xen/dist/install/usr/local/lib/libxenforeignmemory.so
+for i in  /build/xen/tools/libs/foreignmemory/../../../tools/include/xenforeignmemory.h; do /build/xen/tools/libs/foreignmemory/../../../tools/cross-install -m0644 -p $i /build/xen/dist/install/usr/local/include; done
+/build/xen/tools/libs/foreignmemory/../../../tools/cross-install -m0644 -p xenforeignmemory.pc /build/xen/dist/install/usr/local/lib/pkgconfig
+make[7]: Leaving directory '/build/xen/tools/libs/foreignmemory'
+make[6]: Leaving directory '/build/xen/tools/libs'
+make[6]: Entering directory '/build/xen/tools/libs'
+make -C devicemodel install
+make[7]: Entering directory '/build/xen/tools/libs/devicemodel'
+/build/xen/tools/libs/devicemodel/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/lib
+/build/xen/tools/libs/devicemodel/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/include
+/build/xen/tools/libs/devicemodel/../../../tools/cross-install -m0755 -p libxendevicemodel.so.1.4 /build/xen/dist/install/usr/local/lib
+/build/xen/tools/libs/devicemodel/../../../tools/cross-install -m0644 -p libxendevicemodel.a /build/xen/dist/install/usr/local/lib
+ln -sf libxendevicemodel.so.1.4 /build/xen/dist/install/usr/local/lib/libxendevicemodel.so.1
+ln -sf libxendevicemodel.so.1 /build/xen/dist/install/usr/local/lib/libxendevicemodel.so
+for i in  /build/xen/tools/libs/devicemodel/../../../tools/include/xendevicemodel.h; do /build/xen/tools/libs/devicemodel/../../../tools/cross-install -m0644 -p $i /build/xen/dist/install/usr/local/include; done
+/build/xen/tools/libs/devicemodel/../../../tools/cross-install -m0644 -p xendevicemodel.pc /build/xen/dist/install/usr/local/lib/pkgconfig
+make[7]: Leaving directory '/build/xen/tools/libs/devicemodel'
+make[6]: Leaving directory '/build/xen/tools/libs'
+make[6]: Entering directory '/build/xen/tools/libs'
+make -C ctrl install
+make[7]: Entering directory '/build/xen/tools/libs/ctrl'
+echo 'libxenctrl_4.18.0 { global: *; };' >./.libxenctrl.map.tmp
+if ! cmp -s ./.libxenctrl.map.tmp libxenctrl.map.tmp; then mv -f ./.libxenctrl.map.tmp libxenctrl.map.tmp; else rm -f ./.libxenctrl.map.tmp; fi
+/build/xen/tools/libs/ctrl/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/lib
+/build/xen/tools/libs/ctrl/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/include
+/build/xen/tools/libs/ctrl/../../../tools/cross-install -m0755 -p libxenctrl.so.4.18.0 /build/xen/dist/install/usr/local/lib
+/build/xen/tools/libs/ctrl/../../../tools/cross-install -m0644 -p libxenctrl.a /build/xen/dist/install/usr/local/lib
+ln -sf libxenctrl.so.4.18.0 /build/xen/dist/install/usr/local/lib/libxenctrl.so.4.18
+ln -sf libxenctrl.so.4.18 /build/xen/dist/install/usr/local/lib/libxenctrl.so
+for i in  /build/xen/tools/libs/ctrl/../../../tools/include/xenctrl.h  /build/xen/tools/libs/ctrl/../../../tools/include/xenctrl_compat.h; do /build/xen/tools/libs/ctrl/../../../tools/cross-install -m0644 -p $i /build/xen/dist/install/usr/local/include; done
+/build/xen/tools/libs/ctrl/../../../tools/cross-install -m0644 -p xencontrol.pc /build/xen/dist/install/usr/local/lib/pkgconfig
+make[7]: Leaving directory '/build/xen/tools/libs/ctrl'
+make[6]: Leaving directory '/build/xen/tools/libs'
+make[6]: Entering directory '/build/xen/tools/libs'
+make -C guest install
+make[7]: Entering directory '/build/xen/tools/libs/guest'
+echo 'libxenguest_4.18.0 { global: *; };' >./.libxenguest.map.tmp
+if ! cmp -s ./.libxenguest.map.tmp libxenguest.map.tmp; then mv -f ./.libxenguest.map.tmp libxenguest.map.tmp; else rm -f ./.libxenguest.map.tmp; fi
+/build/xen/tools/libs/guest/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/lib
+/build/xen/tools/libs/guest/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/include
+/build/xen/tools/libs/guest/../../../tools/cross-install -m0755 -p libxenguest.so.4.18.0 /build/xen/dist/install/usr/local/lib
+/build/xen/tools/libs/guest/../../../tools/cross-install -m0644 -p libxenguest.a /build/xen/dist/install/usr/local/lib
+ln -sf libxenguest.so.4.18.0 /build/xen/dist/install/usr/local/lib/libxenguest.so.4.18
+ln -sf libxenguest.so.4.18 /build/xen/dist/install/usr/local/lib/libxenguest.so
+for i in  /build/xen/tools/libs/guest/../../../tools/include/xenguest.h; do /build/xen/tools/libs/guest/../../../tools/cross-install -m0644 -p $i /build/xen/dist/install/usr/local/include; done
+/build/xen/tools/libs/guest/../../../tools/cross-install -m0644 -p xenguest.pc /build/xen/dist/install/usr/local/lib/pkgconfig
+make[7]: Leaving directory '/build/xen/tools/libs/guest'
+make[6]: Leaving directory '/build/xen/tools/libs'
+make[6]: Entering directory '/build/xen/tools/libs'
+make -C hypfs install
+make[7]: Entering directory '/build/xen/tools/libs/hypfs'
+/build/xen/tools/libs/hypfs/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/lib
+/build/xen/tools/libs/hypfs/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/include
+/build/xen/tools/libs/hypfs/../../../tools/cross-install -m0755 -p libxenhypfs.so.1.0 /build/xen/dist/install/usr/local/lib
+/build/xen/tools/libs/hypfs/../../../tools/cross-install -m0644 -p libxenhypfs.a /build/xen/dist/install/usr/local/lib
+ln -sf libxenhypfs.so.1.0 /build/xen/dist/install/usr/local/lib/libxenhypfs.so.1
+ln -sf libxenhypfs.so.1 /build/xen/dist/install/usr/local/lib/libxenhypfs.so
+for i in  /build/xen/tools/libs/hypfs/../../../tools/include/xenhypfs.h; do /build/xen/tools/libs/hypfs/../../../tools/cross-install -m0644 -p $i /build/xen/dist/install/usr/local/include; done
+/build/xen/tools/libs/hypfs/../../../tools/cross-install -m0644 -p xenhypfs.pc /build/xen/dist/install/usr/local/lib/pkgconfig
+make[7]: Leaving directory '/build/xen/tools/libs/hypfs'
+make[6]: Leaving directory '/build/xen/tools/libs'
+make[6]: Entering directory '/build/xen/tools/libs'
+make -C store install
+make[7]: Entering directory '/build/xen/tools/libs/store'
+/build/xen/tools/libs/store/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/lib
+/build/xen/tools/libs/store/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/include
+/build/xen/tools/libs/store/../../../tools/cross-install -m0755 -p libxenstore.so.4.0 /build/xen/dist/install/usr/local/lib
+/build/xen/tools/libs/store/../../../tools/cross-install -m0644 -p libxenstore.a /build/xen/dist/install/usr/local/lib
+ln -sf libxenstore.so.4.0 /build/xen/dist/install/usr/local/lib/libxenstore.so.4
+ln -sf libxenstore.so.4 /build/xen/dist/install/usr/local/lib/libxenstore.so
+for i in  /build/xen/tools/libs/store/../../../tools/include/xenstore.h  /build/xen/tools/libs/store/../../../tools/include/xenstore_lib.h; do /build/xen/tools/libs/store/../../../tools/cross-install -m0644 -p $i /build/xen/dist/install/usr/local/include; done
+/build/xen/tools/libs/store/../../../tools/cross-install -m0644 -p xenstore.pc /build/xen/dist/install/usr/local/lib/pkgconfig
+/build/xen/tools/libs/store/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/include
+/build/xen/tools/libs/store/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/include/xenstore-compat
+/build/xen/tools/libs/store/../../../tools/cross-install -m0644 -p /build/xen/tools/libs/store/../../../tools/include/xenstore-compat/xs.h /build/xen/dist/install/usr/local/include/xenstore-compat/xs.h
+/build/xen/tools/libs/store/../../../tools/cross-install -m0644 -p /build/xen/tools/libs/store/../../../tools/include/xenstore-compat/xs_lib.h /build/xen/dist/install/usr/local/include/xenstore-compat/xs_lib.h
+ln -sf xenstore-compat/xs.h  /build/xen/dist/install/usr/local/include/xs.h
+ln -sf xenstore-compat/xs_lib.h /build/xen/dist/install/usr/local/include/xs_lib.h
+make[7]: Leaving directory '/build/xen/tools/libs/store'
+make[6]: Leaving directory '/build/xen/tools/libs'
+make[6]: Entering directory '/build/xen/tools/libs'
+make -C stat install
+make[7]: Entering directory '/build/xen/tools/libs/stat'
+echo 'libxenstat_4.18.0 { global: *; };' >./.libxenstat.map.tmp
+if ! cmp -s ./.libxenstat.map.tmp libxenstat.map.tmp; then mv -f ./.libxenstat.map.tmp libxenstat.map.tmp; else rm -f ./.libxenstat.map.tmp; fi
+/build/xen/tools/libs/stat/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/lib
+/build/xen/tools/libs/stat/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/include
+/build/xen/tools/libs/stat/../../../tools/cross-install -m0755 -p libxenstat.so.4.18.0 /build/xen/dist/install/usr/local/lib
+/build/xen/tools/libs/stat/../../../tools/cross-install -m0644 -p libxenstat.a /build/xen/dist/install/usr/local/lib
+ln -sf libxenstat.so.4.18.0 /build/xen/dist/install/usr/local/lib/libxenstat.so.4.18
+ln -sf libxenstat.so.4.18 /build/xen/dist/install/usr/local/lib/libxenstat.so
+for i in  /build/xen/tools/libs/stat/../../../tools/include/xenstat.h; do /build/xen/tools/libs/stat/../../../tools/cross-install -m0644 -p $i /build/xen/dist/install/usr/local/include; done
+/build/xen/tools/libs/stat/../../../tools/cross-install -m0644 -p xenstat.pc /build/xen/dist/install/usr/local/lib/pkgconfig
+make[7]: Leaving directory '/build/xen/tools/libs/stat'
+make[6]: Leaving directory '/build/xen/tools/libs'
+make[6]: Entering directory '/build/xen/tools/libs'
+make -C vchan install
+make[7]: Entering directory '/build/xen/tools/libs/vchan'
+echo 'libxenvchan_4.18.0 { global: *; };' >./.libxenvchan.map.tmp
+if ! cmp -s ./.libxenvchan.map.tmp libxenvchan.map.tmp; then mv -f ./.libxenvchan.map.tmp libxenvchan.map.tmp; else rm -f ./.libxenvchan.map.tmp; fi
+/build/xen/tools/libs/vchan/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/lib
+/build/xen/tools/libs/vchan/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/include
+/build/xen/tools/libs/vchan/../../../tools/cross-install -m0755 -p libxenvchan.so.4.18.0 /build/xen/dist/install/usr/local/lib
+/build/xen/tools/libs/vchan/../../../tools/cross-install -m0644 -p libxenvchan.a /build/xen/dist/install/usr/local/lib
+ln -sf libxenvchan.so.4.18.0 /build/xen/dist/install/usr/local/lib/libxenvchan.so.4.18
+ln -sf libxenvchan.so.4.18 /build/xen/dist/install/usr/local/lib/libxenvchan.so
+for i in  /build/xen/tools/libs/vchan/../../../tools/include/libxenvchan.h; do /build/xen/tools/libs/vchan/../../../tools/cross-install -m0644 -p $i /build/xen/dist/install/usr/local/include; done
+/build/xen/tools/libs/vchan/../../../tools/cross-install -m0644 -p xenvchan.pc /build/xen/dist/install/usr/local/lib/pkgconfig
+make[7]: Leaving directory '/build/xen/tools/libs/vchan'
+make[6]: Leaving directory '/build/xen/tools/libs'
+make[6]: Entering directory '/build/xen/tools/libs'
+make -C light install
+make[7]: Entering directory '/build/xen/tools/libs/light'
+echo 'libxenlight_4.18.0 { global: *; };' >./.libxenlight.map.tmp
+if ! cmp -s ./.libxenlight.map.tmp libxenlight.map.tmp; then mv -f ./.libxenlight.map.tmp libxenlight.map.tmp; else rm -f ./.libxenlight.map.tmp; fi
+/build/xen/tools/libs/light/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/lib
+/build/xen/tools/libs/light/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/include
+/build/xen/tools/libs/light/../../../tools/cross-install -m0755 -p libxenlight.so.4.18.0 /build/xen/dist/install/usr/local/lib
+/build/xen/tools/libs/light/../../../tools/cross-install -m0644 -p libxenlight.a /build/xen/dist/install/usr/local/lib
+ln -sf libxenlight.so.4.18.0 /build/xen/dist/install/usr/local/lib/libxenlight.so.4.18
+ln -sf libxenlight.so.4.18 /build/xen/dist/install/usr/local/lib/libxenlight.so
+for i in  /build/xen/tools/libs/light/../../../tools/include/libxl.h  /build/xen/tools/libs/light/../../../tools/include/libxl_event.h  /build/xen/tools/libs/light/../../../tools/include/libxl_json.h  /build/xen/tools/libs/light/../../../tools/include/_libxl_types.h  /build/xen/tools/libs/light/../../../tools/include/_libxl_types_json.h  /build/xen/tools/libs/light/../../../tools/include/libxl_utils.h  /build/xen/tools/libs/light/../../../tools/include/libxl_uuid.h; do /build/xen/tools/libs/light/../../../tools/cross-install -m0644 -p $i /build/xen/dist/install/usr/local/include; done
+/build/xen/tools/libs/light/../../../tools/cross-install -m0644 -p xenlight.pc /build/xen/dist/install/usr/local/lib/pkgconfig
+/build/xen/tools/libs/light/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/lib/xen/bin
+/build/xen/tools/libs/light/../../../tools/cross-install -m0755 -p libxl-save-helper /build/xen/dist/install/usr/local/lib/xen/bin
+make[7]: Leaving directory '/build/xen/tools/libs/light'
+make[6]: Leaving directory '/build/xen/tools/libs'
+make[6]: Entering directory '/build/xen/tools/libs'
+make -C util install
+make[7]: Entering directory '/build/xen/tools/libs/util'
+echo 'libxlutil_4.18.0 { global: *; };' >./.libxlutil.map.tmp
+if ! cmp -s ./.libxlutil.map.tmp libxlutil.map.tmp; then mv -f ./.libxlutil.map.tmp libxlutil.map.tmp; else rm -f ./.libxlutil.map.tmp; fi
+/build/xen/tools/libs/util/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/lib
+/build/xen/tools/libs/util/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/include
+/build/xen/tools/libs/util/../../../tools/cross-install -m0755 -p libxlutil.so.4.18.0 /build/xen/dist/install/usr/local/lib
+/build/xen/tools/libs/util/../../../tools/cross-install -m0644 -p libxlutil.a /build/xen/dist/install/usr/local/lib
+ln -sf libxlutil.so.4.18.0 /build/xen/dist/install/usr/local/lib/libxlutil.so.4.18
+ln -sf libxlutil.so.4.18 /build/xen/dist/install/usr/local/lib/libxlutil.so
+for i in  /build/xen/tools/libs/util/../../../tools/include/libxlutil.h; do /build/xen/tools/libs/util/../../../tools/cross-install -m0644 -p $i /build/xen/dist/install/usr/local/include; done
+/build/xen/tools/libs/util/../../../tools/cross-install -m0644 -p xlutil.pc /build/xen/dist/install/usr/local/lib/pkgconfig
+make[7]: Leaving directory '/build/xen/tools/libs/util'
+make[6]: Leaving directory '/build/xen/tools/libs'
+make[5]: Leaving directory '/build/xen/tools/libs'
+make[4]: Leaving directory '/build/xen/tools'
+make[4]: Entering directory '/build/xen/tools'
+make -C flask install
+make[5]: Entering directory '/build/xen/tools/flask'
+make[6]: Entering directory '/build/xen/tools/flask'
+make -C utils install
+make[7]: Entering directory '/build/xen/tools/flask/utils'
+/build/xen/tools/flask/utils/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/sbin
+/build/xen/tools/flask/utils/../../../tools/cross-install -m0755 -p flask-loadpolicy flask-setenforce flask-getenforce flask-label-pci flask-get-bool flask-set-bool /build/xen/dist/install/usr/local/sbin
+make[7]: Leaving directory '/build/xen/tools/flask/utils'
+make[6]: Leaving directory '/build/xen/tools/flask'
+make[6]: Entering directory '/build/xen/tools/flask'
+make -C policy install
+make[7]: Entering directory '/build/xen/tools/flask/policy'
+/build/xen/tools/flask/policy/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install//boot
+/build/xen/tools/flask/policy/../../../tools/cross-install -m0644 -p /build/xen/tools/flask/policy/xenpolicy-4.18-unstable /build/xen/dist/install//boot
+make[7]: Leaving directory '/build/xen/tools/flask/policy'
+make[6]: Leaving directory '/build/xen/tools/flask'
+make[5]: Leaving directory '/build/xen/tools/flask'
+make[4]: Leaving directory '/build/xen/tools'
+make[4]: Entering directory '/build/xen/tools'
+make -C fuzz install
+make[5]: Entering directory '/build/xen/tools/fuzz'
+make[6]: Entering directory '/build/xen/tools/fuzz'
+make -C libelf install
+make[7]: Entering directory '/build/xen/tools/fuzz/libelf'
+ln -nsf ../../../xen/common/libelf/libelf-tools.c libelf-tools.c
+ln -nsf ../../../xen/common/libelf/libelf-loader.c libelf-loader.c
+ln -nsf ../../../xen/common/libelf/libelf-dominfo.c libelf-dominfo.c
+make[7]: Leaving directory '/build/xen/tools/fuzz/libelf'
+make[6]: Leaving directory '/build/xen/tools/fuzz'
+make[6]: Entering directory '/build/xen/tools/fuzz'
+make -C x86_instruction_emulator install
+make[7]: Entering directory '/build/xen/tools/fuzz/x86_instruction_emulator'
+make[7]: Nothing to be done for 'install'.
+make[7]: Leaving directory '/build/xen/tools/fuzz/x86_instruction_emulator'
+make[6]: Leaving directory '/build/xen/tools/fuzz'
+make[5]: Leaving directory '/build/xen/tools/fuzz'
+make[4]: Leaving directory '/build/xen/tools'
+make[4]: Entering directory '/build/xen/tools'
+make -C xenstore install
+make[5]: Entering directory '/build/xen/tools/xenstore'
+/build/xen/tools/xenstore/../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/bin
+/build/xen/tools/xenstore/../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/sbin
+/build/xen/tools/xenstore/../../tools/cross-install -m0755 -p xenstored /build/xen/dist/install/usr/local/sbin
+/build/xen/tools/xenstore/../../tools/cross-install -m0755 -p xenstore-control /build/xen/dist/install/usr/local/bin
+/build/xen/tools/xenstore/../../tools/cross-install -m0755 -p xenstore /build/xen/dist/install/usr/local/bin
+set -e ; for c in xenstore-exists xenstore-list xenstore-read xenstore-rm xenstore-chmod xenstore-write xenstore-ls xenstore-watch ; do \
+	ln -f /build/xen/dist/install/usr/local/bin/xenstore /build/xen/dist/install/usr/local/bin/${c} ; \
+done
+make[5]: Leaving directory '/build/xen/tools/xenstore'
+make[4]: Leaving directory '/build/xen/tools'
+make[4]: Entering directory '/build/xen/tools'
+make -C misc install
+make[5]: Entering directory '/build/xen/tools/misc'
+/build/xen/tools/misc/../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/bin
+/build/xen/tools/misc/../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/sbin
+/build/xen/tools/misc/../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/lib/xen/bin
+/build/xen/tools/misc/../../tools/python/install-wrap "/usr/bin/python3 -s" /build/xen/tools/misc/../../tools/cross-install -m0755 -p xencov_split  /build/xen/dist/install/usr/local/bin
+/build/xen/tools/misc/../../tools/python/install-wrap "/usr/bin/python3 -s" /build/xen/tools/misc/../../tools/cross-install -m0755 -p xencov xenhypfs xenlockprof xenperf xenpm xenwatchdogd xen-access xen-livepatch xen-diag  /build/xen/dist/install/usr/local/sbin
+/build/xen/tools/misc/../../tools/python/install-wrap "/usr/bin/python3 -s" /build/xen/tools/misc/../../tools/cross-install -m0755 -p xenpvnetboot /build/xen/dist/install/usr/local/lib/xen/bin
+make[5]: Leaving directory '/build/xen/tools/misc'
+make[4]: Leaving directory '/build/xen/tools'
+make[4]: Entering directory '/build/xen/tools'
+make -C examples install
+make[5]: Entering directory '/build/xen/tools/examples'
+/build/xen/tools/examples/../../tools/cross-install -d -m0755 -p /build/xen/dist/install/etc/xen
+/build/xen/tools/examples/../../tools/cross-install -d -m0755 -p /build/xen/dist/install/etc/xen
+/build/xen/tools/examples/../../tools/cross-install -m0644 -p README /build/xen/dist/install/etc/xen
+/build/xen/tools/examples/../../tools/cross-install -d -m0755 -p /build/xen/dist/install/etc/xen/auto
+/build/xen/tools/examples/../../tools/cross-install -m0644 -p xlexample.hvm xlexample.pvlinux xlexample.pvhlinux xl.conf cpupool /build/xen/dist/install/etc/xen
+make[5]: Leaving directory '/build/xen/tools/examples'
+make[4]: Leaving directory '/build/xen/tools'
+make[4]: Entering directory '/build/xen/tools'
+make -C hotplug install
+make[5]: Entering directory '/build/xen/tools/hotplug'
+make[6]: Entering directory '/build/xen/tools/hotplug'
+make -C common install
+make[7]: Entering directory '/build/xen/tools/hotplug/common'
+/build/xen/tools/hotplug/common/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/etc/xen/scripts
+set -e; for i in ; \
+   do \
+   /build/xen/tools/hotplug/common/../../../tools/cross-install -m0755 -p $i /build/xen/dist/install/etc/xen/scripts; \
+done
+set -e; for i in hotplugpath.sh; \
+   do \
+   /build/xen/tools/hotplug/common/../../../tools/cross-install -m0644 -p $i /build/xen/dist/install/etc/xen/scripts; \
+done
+make[7]: Leaving directory '/build/xen/tools/hotplug/common'
+make[6]: Leaving directory '/build/xen/tools/hotplug'
+make[6]: Entering directory '/build/xen/tools/hotplug'
+make -C Linux install
+make[7]: Entering directory '/build/xen/tools/hotplug/Linux'
+/build/xen/tools/hotplug/Linux/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/etc/init.d
+/build/xen/tools/hotplug/Linux/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/etc/xen/scripts
+/build/xen/tools/hotplug/Linux/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/etc/default
+set -e; for i in vif-bridge vif-route vif-nat vif-openvswitch vif-setup block block-enbd block-nbd external-device-migrate vscsi block-iscsi block-tap block-drbd-probe block-dummy colo-proxy-setup launch-xenstore; \
+    do \
+    /build/xen/tools/hotplug/Linux/../../../tools/cross-install -m0755 -p $i /build/xen/dist/install/etc/xen/scripts; \
+done
+/build/xen/tools/hotplug/Linux/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/lib/xen/bin
+/build/xen/tools/hotplug/Linux/../../../tools/cross-install -m0644 -p init.d/sysconfig.xendomains /build/xen/dist/install/etc/default/xendomains
+/build/xen/tools/hotplug/Linux/../../../tools/cross-install -m0644 -p init.d/sysconfig.xencommons /build/xen/dist/install/etc/default/xencommons
+/build/xen/tools/hotplug/Linux/../../../tools/cross-install -m0755 -p xendomains /build/xen/dist/install/usr/local/lib/xen/bin
+/build/xen/tools/hotplug/Linux/../../../tools/cross-install -m0755 -p init.d/xendomains /build/xen/dist/install/etc/init.d
+/build/xen/tools/hotplug/Linux/../../../tools/cross-install -m0755 -p init.d/xencommons /build/xen/dist/install/etc/init.d
+/build/xen/tools/hotplug/Linux/../../../tools/cross-install -m0755 -p init.d/xendriverdomain /build/xen/dist/install/etc/init.d
+/build/xen/tools/hotplug/Linux/../../../tools/cross-install -m0755 -p init.d/xen-watchdog /build/xen/dist/install/etc/init.d
+set -e; for i in xen-script-common.sh locking.sh logging.sh xen-hotplug-common.sh xen-network-common.sh vif-common.sh block-common.sh; \
+    do \
+    /build/xen/tools/hotplug/Linux/../../../tools/cross-install -m0644 -p $i /build/xen/dist/install/etc/xen/scripts; \
+done
+make[7]: Leaving directory '/build/xen/tools/hotplug/Linux'
+make[6]: Leaving directory '/build/xen/tools/hotplug'
+make[5]: Leaving directory '/build/xen/tools/hotplug'
+make[4]: Leaving directory '/build/xen/tools'
+make[4]: Entering directory '/build/xen/tools'
+make -C xentrace install
+make[5]: Entering directory '/build/xen/tools/xentrace'
+/build/xen/tools/xentrace/../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/bin
+/build/xen/tools/xentrace/../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/sbin
+/build/xen/tools/xentrace/../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/lib/xen/bin
+/build/xen/tools/xentrace/../../tools/cross-install -m0755 -p xenalyze /build/xen/dist/install/usr/local/bin
+/build/xen/tools/xentrace/../../tools/cross-install -m0755 -p xentrace xentrace_setsize /build/xen/dist/install/usr/local/sbin
+/build/xen/tools/xentrace/../../tools/python/install-wrap "/usr/bin/python3 -s" /build/xen/tools/xentrace/../../tools/cross-install -m0755 -p xentrace_format /build/xen/dist/install/usr/local/bin
+/build/xen/tools/xentrace/../../tools/cross-install -m0755 -p xenctx /build/xen/dist/install/usr/local/lib/xen/bin
+make[5]: Leaving directory '/build/xen/tools/xentrace'
+make[4]: Leaving directory '/build/xen/tools'
+make[4]: Entering directory '/build/xen/tools'
+make -C console install
+make[5]: Entering directory '/build/xen/tools/console'
+make[6]: Entering directory '/build/xen/tools/console'
+make -C daemon install
+make[7]: Entering directory '/build/xen/tools/console/daemon'
+/build/xen/tools/console/daemon/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install//usr/local/sbin
+/build/xen/tools/console/daemon/../../../tools/cross-install -m0755 -p xenconsoled /build/xen/dist/install//usr/local/sbin
+make[7]: Leaving directory '/build/xen/tools/console/daemon'
+make[6]: Leaving directory '/build/xen/tools/console'
+make[6]: Entering directory '/build/xen/tools/console'
+make -C client install
+make[7]: Entering directory '/build/xen/tools/console/client'
+/build/xen/tools/console/client/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/lib/xen/bin
+/build/xen/tools/console/client/../../../tools/cross-install -m0755 -p xenconsole /build/xen/dist/install/usr/local/lib/xen/bin
+make[7]: Leaving directory '/build/xen/tools/console/client'
+make[6]: Leaving directory '/build/xen/tools/console'
+make[5]: Leaving directory '/build/xen/tools/console'
+make[4]: Leaving directory '/build/xen/tools'
+make[4]: Entering directory '/build/xen/tools'
+make -C xenmon install
+make[5]: Entering directory '/build/xen/tools/xenmon'
+/build/xen/tools/xenmon/../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/sbin
+/build/xen/tools/xenmon/../../tools/cross-install -m0755 -p xenbaked /build/xen/dist/install/usr/local/sbin/xenbaked
+/build/xen/tools/xenmon/../../tools/cross-install -m0755 -p xentrace_setmask  /build/xen/dist/install/usr/local/sbin/xentrace_setmask
+/build/xen/tools/xenmon/../../tools/python/install-wrap "/usr/bin/python3 -s" /build/xen/tools/xenmon/../../tools/cross-install -m0755 -p xenmon.py  /build/xen/dist/install/usr/local/sbin/xenmon
+make[5]: Leaving directory '/build/xen/tools/xenmon'
+make[4]: Leaving directory '/build/xen/tools'
+make[4]: Entering directory '/build/xen/tools'
+make -C xentop install
+make[5]: Entering directory '/build/xen/tools/xentop'
+/build/xen/tools/xentop/../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/sbin
+/build/xen/tools/xentop/../../tools/cross-install -m0755 -p xentop /build/xen/dist/install/usr/local/sbin
+make[5]: Leaving directory '/build/xen/tools/xentop'
+make[4]: Leaving directory '/build/xen/tools'
+make[4]: Entering directory '/build/xen/tools'
+make -C libfsimage install
+make[5]: Entering directory '/build/xen/tools/libfsimage'
+make[6]: Entering directory '/build/xen/tools/libfsimage'
+make -C common install
+make[7]: Entering directory '/build/xen/tools/libfsimage/common'
+/build/xen/tools/libfsimage/common/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/lib
+/build/xen/tools/libfsimage/common/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/include
+/build/xen/tools/libfsimage/common/../../../tools/cross-install -m0755 -p libxenfsimage.so.4.18.0 /build/xen/dist/install/usr/local/lib
+ln -sf libxenfsimage.so.4.18.0 /build/xen/dist/install/usr/local/lib/libxenfsimage.so.4.18
+ln -sf libxenfsimage.so.4.18 /build/xen/dist/install/usr/local/lib/libxenfsimage.so
+/build/xen/tools/libfsimage/common/../../../tools/cross-install -m0644 -p xenfsimage.h /build/xen/dist/install/usr/local/include
+/build/xen/tools/libfsimage/common/../../../tools/cross-install -m0644 -p xenfsimage_plugin.h /build/xen/dist/install/usr/local/include
+/build/xen/tools/libfsimage/common/../../../tools/cross-install -m0644 -p xenfsimage_grub.h /build/xen/dist/install/usr/local/include
+make[7]: Leaving directory '/build/xen/tools/libfsimage/common'
+make[6]: Leaving directory '/build/xen/tools/libfsimage'
+make[6]: Entering directory '/build/xen/tools/libfsimage'
+make -C ufs install
+make[7]: Entering directory '/build/xen/tools/libfsimage/ufs'
+/build/xen/tools/libfsimage/ufs/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/lib/xenfsimage/ufs
+/build/xen/tools/libfsimage/ufs/../../../tools/cross-install -m0755 -p fsimage.so /build/xen/dist/install/usr/local/lib/xenfsimage/ufs
+make[7]: Leaving directory '/build/xen/tools/libfsimage/ufs'
+make[6]: Leaving directory '/build/xen/tools/libfsimage'
+make[6]: Entering directory '/build/xen/tools/libfsimage'
+make -C reiserfs install
+make[7]: Entering directory '/build/xen/tools/libfsimage/reiserfs'
+/build/xen/tools/libfsimage/reiserfs/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/lib/xenfsimage/reiserfs
+/build/xen/tools/libfsimage/reiserfs/../../../tools/cross-install -m0755 -p fsimage.so /build/xen/dist/install/usr/local/lib/xenfsimage/reiserfs
+make[7]: Leaving directory '/build/xen/tools/libfsimage/reiserfs'
+make[6]: Leaving directory '/build/xen/tools/libfsimage'
+make[6]: Entering directory '/build/xen/tools/libfsimage'
+make -C iso9660 install
+make[7]: Entering directory '/build/xen/tools/libfsimage/iso9660'
+/build/xen/tools/libfsimage/iso9660/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/lib/xenfsimage/iso9660
+/build/xen/tools/libfsimage/iso9660/../../../tools/cross-install -m0755 -p fsimage.so /build/xen/dist/install/usr/local/lib/xenfsimage/iso9660
+make[7]: Leaving directory '/build/xen/tools/libfsimage/iso9660'
+make[6]: Leaving directory '/build/xen/tools/libfsimage'
+make[6]: Entering directory '/build/xen/tools/libfsimage'
+make -C fat install
+make[7]: Entering directory '/build/xen/tools/libfsimage/fat'
+/build/xen/tools/libfsimage/fat/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/lib/xenfsimage/fat
+/build/xen/tools/libfsimage/fat/../../../tools/cross-install -m0755 -p fsimage.so /build/xen/dist/install/usr/local/lib/xenfsimage/fat
+make[7]: Leaving directory '/build/xen/tools/libfsimage/fat'
+make[6]: Leaving directory '/build/xen/tools/libfsimage'
+make[6]: Entering directory '/build/xen/tools/libfsimage'
+make -C zfs install
+make[7]: Entering directory '/build/xen/tools/libfsimage/zfs'
+/build/xen/tools/libfsimage/zfs/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/lib/xenfsimage/zfs
+/build/xen/tools/libfsimage/zfs/../../../tools/cross-install -m0755 -p fsimage.so /build/xen/dist/install/usr/local/lib/xenfsimage/zfs
+make[7]: Leaving directory '/build/xen/tools/libfsimage/zfs'
+make[6]: Leaving directory '/build/xen/tools/libfsimage'
+make[6]: Entering directory '/build/xen/tools/libfsimage'
+make -C ext2fs install
+make[7]: Entering directory '/build/xen/tools/libfsimage/ext2fs'
+/build/xen/tools/libfsimage/ext2fs/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/lib/xenfsimage/ext2fs
+/build/xen/tools/libfsimage/ext2fs/../../../tools/cross-install -m0755 -p fsimage.so /build/xen/dist/install/usr/local/lib/xenfsimage/ext2fs
+make[7]: Leaving directory '/build/xen/tools/libfsimage/ext2fs'
+make[6]: Leaving directory '/build/xen/tools/libfsimage'
+make[5]: Leaving directory '/build/xen/tools/libfsimage'
+make[4]: Leaving directory '/build/xen/tools'
+make[4]: Entering directory '/build/xen/tools'
+make -C vchan install
+make[5]: Entering directory '/build/xen/tools/vchan'
+/build/xen/tools/vchan/../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/bin
+/build/xen/tools/vchan/../../tools/cross-install -m0755 -p vchan-socket-proxy /build/xen/dist/install/usr/local/bin
+make[5]: Leaving directory '/build/xen/tools/vchan'
+make[4]: Leaving directory '/build/xen/tools'
+make[4]: Entering directory '/build/xen/tools'
+make -C xenpmd install
+make[5]: Entering directory '/build/xen/tools/xenpmd'
+/build/xen/tools/xenpmd/../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/sbin
+/build/xen/tools/xenpmd/../../tools/cross-install -m0755 -p xenpmd /build/xen/dist/install/usr/local/sbin
+make[5]: Leaving directory '/build/xen/tools/xenpmd'
+make[4]: Leaving directory '/build/xen/tools'
+make[4]: Entering directory '/build/xen/tools'
+make -C xl install
+make[5]: Entering directory '/build/xen/tools/xl'
+/build/xen/tools/xl/../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/sbin
+/build/xen/tools/xl/../../tools/cross-install -d -m0755 -p /build/xen/dist/install/etc/bash_completion.d
+/build/xen/tools/xl/../../tools/cross-install -m0755 -p xl /build/xen/dist/install/usr/local/sbin
+/build/xen/tools/xl/../../tools/cross-install -m0644 -p bash-completion /build/xen/dist/install/etc/bash_completion.d/xl
+make[5]: Leaving directory '/build/xen/tools/xl'
+make[4]: Leaving directory '/build/xen/tools'
+make[4]: Entering directory '/build/xen/tools'
+make -C helpers install
+make[5]: Entering directory '/build/xen/tools/helpers'
+/build/xen/tools/helpers/../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/lib/xen/bin
+for i in xen-init-dom0; do /build/xen/tools/helpers/../../tools/cross-install -m0755 -p $i /build/xen/dist/install/usr/local/lib/xen/bin; done
+make[5]: Leaving directory '/build/xen/tools/helpers'
+make[4]: Leaving directory '/build/xen/tools'
+make[4]: Entering directory '/build/xen/tools'
+make -C tests install
+make[5]: Entering directory '/build/xen/tools/tests'
+make[6]: Entering directory '/build/xen/tools/tests'
+make -C resource install
+make[7]: Entering directory '/build/xen/tools/tests/resource'
+/build/xen/tools/tests/resource/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/lib/xen/bin
+/build/xen/tools/tests/resource/../../../tools/cross-install -m0755 -p test-resource /build/xen/dist/install/usr/local/lib/xen/bin
+make[7]: Leaving directory '/build/xen/tools/tests/resource'
+make[6]: Leaving directory '/build/xen/tools/tests'
+make[6]: Entering directory '/build/xen/tools/tests'
+make -C xenstore install
+make[7]: Entering directory '/build/xen/tools/tests/xenstore'
+/build/xen/tools/tests/xenstore/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/lib/xen/bin
+/build/xen/tools/tests/xenstore/../../../tools/cross-install -m0755 -p test-xenstore /build/xen/dist/install/usr/local/lib/xen/bin
+make[7]: Leaving directory '/build/xen/tools/tests/xenstore'
+make[6]: Leaving directory '/build/xen/tools/tests'
+make[6]: Entering directory '/build/xen/tools/tests'
+make -C depriv install
+make[7]: Entering directory '/build/xen/tools/tests/depriv'
+/build/xen/tools/tests/depriv/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/lib/xen/bin
+/build/xen/tools/tests/depriv/../../../tools/cross-install -m0755 -p depriv-fd-checker /build/xen/dist/install/usr/local/lib/xen/bin
+make[7]: Leaving directory '/build/xen/tools/tests/depriv'
+make[6]: Leaving directory '/build/xen/tools/tests'
+make[6]: Entering directory '/build/xen/tools/tests'
+make -C vpci install
+make[7]: Entering directory '/build/xen/tools/tests/vpci'
+make[7]: Nothing to be done for 'install'.
+make[7]: Leaving directory '/build/xen/tools/tests/vpci'
+make[6]: Leaving directory '/build/xen/tools/tests'
+make[6]: Entering directory '/build/xen/tools/tests'
+make -C paging-mempool install
+make[7]: Entering directory '/build/xen/tools/tests/paging-mempool'
+/build/xen/tools/tests/paging-mempool/../../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/lib/xen/bin
+/build/xen/tools/tests/paging-mempool/../../../tools/cross-install -m0755 -p test-paging-mempool /build/xen/dist/install/usr/local/lib/xen/bin
+make[7]: Leaving directory '/build/xen/tools/tests/paging-mempool'
+make[6]: Leaving directory '/build/xen/tools/tests'
+make[5]: Leaving directory '/build/xen/tools/tests'
+make[4]: Leaving directory '/build/xen/tools'
+make[4]: Entering directory '/build/xen/tools'
+make -C python install
+make[5]: Entering directory '/build/xen/tools/python'
+/build/xen/tools/python/../../tools/cross-install -d -m0755 -p /build/xen/dist/install/usr/local/lib/xen/bin
+CC="riscv64-linux-gnu-gcc" CFLAGS="-DBUILD_ID -fno-strict-aliasing -std=gnu99 -Wall -Wstrict-prototypes -Wdeclaration-after-statement -Wno-unused-but-set-variable -Wno-unused-local-typedefs   -g3 -Werror -Og -fno-omit-frame-pointer -D__XEN_INTERFACE_VERSION__=__XEN_LATEST_INTERFACE_VERSION__ -MMD -MP -MF .install.d -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE   " LDSHARED="riscv64-linux-gnu-gcc" LDFLAGS="-shared " SHLIB_libxenctrl="    -Wl,-rpath-link=/build/xen/tools/python/../../tools/libs/call -Wl,-rpath-link=/build/xen/tools/python/../../tools/libs/devicemodel -Wl,-rpath-link=/build/xen/tools/python/../../tools/libs/evtchn -Wl,-rpath-link=/build/xen/tools/python/../../tools/libs/foreignmemory -Wl,-rpath-link=/build/xen/tools/python/../../tools/libs/gnttab -Wl,-rpath-link=/build/xen/tools/python/../../tools/libs/toolcore -Wl,-rpath-link=/build/xen/tools/python/../../tools/libs/toollog -Wl,-rpath-link=/build/xen/tools/python/../../tools/libs/ctrl" SHLIB_libxenguest="    -Wl,-rpath-link=/build/xen/tools/python/../../tools/libs/call -Wl,-rpath-link=/build/xen/tools/python/../../tools/libs/ctrl -Wl,-rpath-link=/build/xen/tools/python/../../tools/libs/devicemodel -Wl,-rpath-link=/build/xen/tools/python/../../tools/libs/evtchn -Wl,-rpath-link=/build/xen/tools/python/../../tools/libs/foreignmemory -Wl,-rpath-link=/build/xen/tools/python/../../tools/libs/gnttab -Wl,-rpath-link=/build/xen/tools/python/../../tools/libs/toolcore -Wl,-rpath-link=/build/xen/tools/python/../../tools/libs/toollog -Wl,-rpath-link=/build/xen/tools/python/../../tools/libs/guest" SHLIB_libxenstore="    -Wl,-rpath-link=/build/xen/tools/python/../../tools/libs/toolcore -Wl,-rpath-link=/build/xen/tools/python/../../tools/libs/store" python3 setup.py install --record build/installed_files.txt --prefix="/usr/local" \
+	--root="/build/xen/dist/install" --force
+/usr/lib/python3/dist-packages/setuptools/_distutils/cmd.py:90: SetuptoolsDeprecationWarning: setup.py install is deprecated.
+!!
+
+        ********************************************************************************
+        Please avoid running ``setup.py`` directly.
+        Instead, use pypa/build, pypa/installer or other
+        standards-based tools.
+
+        See https://blog.ganssle.io/articles/2021/10/setup-py-deprecated.html for details.
+        ********************************************************************************
+
+!!
+  self.initialize_options()
+/build/xen/tools/python/../../tools/python/install-wrap "/usr/bin/python3 -s" /build/xen/tools/python/../../tools/cross-install -m0755 -p scripts/convert-legacy-stream /build/xen/dist/install/usr/local/lib/xen/bin
+/build/xen/tools/python/../../tools/python/install-wrap "/usr/bin/python3 -s" /build/xen/tools/python/../../tools/cross-install -m0755 -p scripts/verify-stream-v2 /build/xen/dist/install/usr/local/lib/xen/bin
+make[5]: Leaving directory '/build/xen/tools/python'
+make[4]: Leaving directory '/build/xen/tools'
+make[4]: Entering directory '/build/xen/tools'
+make -C pygrub install
+make[5]: Entering directory '/build/xen/tools/pygrub'
+CC="riscv64-linux-gnu-gcc" CFLAGS="-DBUILD_ID -fno-strict-aliasing -std=gnu99 -Wall -Wstrict-prototypes -Wdeclaration-after-statement -Wno-unused-but-set-variable -Wno-unused-local-typedefs   -g3 -Werror -Og -fno-omit-frame-pointer -D__XEN_INTERFACE_VERSION__=__XEN_LATEST_INTERFACE_VERSION__ -MMD -MP -MF .build.d -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE   " LDSHARED="riscv64-linux-gnu-gcc" LDFLAGS="-shared " python3 setup.py build
+/build/xen/tools/pygrub/../../tools/cross-install -d -m0755 -p /build/xen/dist/install//usr/local/bin
+/build/xen/tools/pygrub/../../tools/cross-install -d -m0755 -p /build/xen/dist/install//usr/local/lib/xen/bin
+CC="riscv64-linux-gnu-gcc" CFLAGS="-DBUILD_ID -fno-strict-aliasing -std=gnu99 -Wall -Wstrict-prototypes -Wdeclaration-after-statement -Wno-unused-but-set-variable -Wno-unused-local-typedefs   -g3 -Werror -Og -fno-omit-frame-pointer -D__XEN_INTERFACE_VERSION__=__XEN_LATEST_INTERFACE_VERSION__ -MMD -MP -MF .install.d -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE   " LDSHARED="riscv64-linux-gnu-gcc" LDFLAGS="-shared " python3 setup.py install --record build/installed_files.txt --prefix="/usr/local" \
+	--root="/build/xen/dist/install" --force
+/usr/lib/python3/dist-packages/setuptools/_distutils/cmd.py:90: SetuptoolsDeprecationWarning: setup.py install is deprecated.
+!!
+
+        ********************************************************************************
+        Please avoid running ``setup.py`` directly.
+        Instead, use pypa/build, pypa/installer or other
+        standards-based tools.
+
+        See https://blog.ganssle.io/articles/2021/10/setup-py-deprecated.html for details.
+        ********************************************************************************
+
+!!
+  self.initialize_options()
+/build/xen/tools/pygrub/../../tools/python/install-wrap "/usr/bin/python3 -s" /build/xen/tools/pygrub/../../tools/cross-install -m0755 -p src/pygrub /build/xen/dist/install//usr/local/lib/xen/bin/pygrub
+set -e; if [ /usr/local/bin != /usr/local/lib/xen/bin -a \
+             "`readlink -f /build/xen/dist/install//usr/local/bin`" != \
+             "`readlink -f /usr/local/lib/xen/bin`" ]; then \
+    ln -sf /usr/local/lib/xen/bin/pygrub /build/xen/dist/install//usr/local/bin; \
+fi
+make[5]: Leaving directory '/build/xen/tools/pygrub'
+make[4]: Leaving directory '/build/xen/tools'
+make[3]: Leaving directory '/build/xen/tools'
+make[2]: Leaving directory '/build/xen/tools'
+make[1]: Leaving directory '/build/xen'
+mkdir -p /build/initrd/dev
+mkdir -p /build/initrd/mnt
+mkdir -p /build/initrd/dist
+mkdir -p /build/initrd/proc
+mkdir -p /build/initrd/sys
+mkdir -p /build/initrd/etc/init.d
+mkdir -p /build/initrd/etc/xen
+mkdir -p /build/initrd/var/run/xenstored
+mkdir -p /build/initrd/var/run/xen
+mkdir -p /build/initrd/var/lib/xen
+mkdir -p /build/initrd/var/lock
+mkdir -p /build/initrd/domu
+mkdir -p /build/initrd/var/log/xen
+mkdir -p /build/initrd/var/run/xen-hotplug
+mkdir -p /build/initrd/usr/local
+ln -sfn /dist/install/usr/local/bin /build/initrd/usr/local/bin
+ln -sfn /dist/install/usr/local/sbin /build/initrd/usr/local/sbin
+ln -sfn /lib /build/initrd/usr/local/lib
+ln -sfn /dist/install/etc/xen/scripts /build/initrd/etc/xen/scripts
+cp /tmp/cfg/xl.conf /build/initrd/etc/xen/
+cp /tmp/cfg/domu.cfg /build/initrd/domu/
+cp /payload/domu-Image.gz /build/initrd/domu/Image.gz
+cp /payload/initrd-all.cpio.gz /build/initrd/domu/initrd.img
+echo "Building initrd with tools image"
+Building initrd with tools image
+cd /build/xen/dist && tar --exclude='*.a' -cf - . \
+    | (cd /build/initrd/dist && tar -xf -)
+mv /build/initrd/dist/install/usr/local/lib/* /build/initrd/lib/
+printf '%s\n' \
+'#!/bin/sh' \
+'echo "Hello RISC-V World!"' \
+'mount -t proc proc /proc' \
+'mount -t xenfs xenfs /proc/xen' \
+'mount -t sysfs sysfs /sys' \
+'./dist/install/usr/local/sbin/xenstored' \
+'sleep 1' \
+'./lib/xen/bin/xen-init-dom0' \
+'exec /bin/sh' \
+> /build/rcS && \
+chmod +x /build/rcS
+cp /build/rcS /build/initrd/etc/init.d/
+sh /build/check-initrd-libs.sh /build/initrd
+initrd library check: 25 sonames, all resolved
+genext2fs -b 250000 -N 1444 -U -d /build/initrd/ /out/initrd-tools.img
+copying from directory /build/initrd/
+
+real	1m5.048s
+user	0m48.052s
+sys	0m17.505s
+239564	/build/initrd

@@ -1,0 +1,112 @@
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from trixie-riscv64.dockerfile
+#1 transferring dockerfile: 5.77kB done
+#1 DONE 0.1s
+
+#2 resolve image config for docker-image://docker.io/docker/dockerfile:1
+#2 DONE 0.6s
+
+#3 docker-image://docker.io/docker/dockerfile:1@sha256:ecfaec9ed6d810b56388c508f4121597bfbba70d41a6dfeee4d8cad5f295fc32
+#3 resolve docker.io/docker/dockerfile:1@sha256:ecfaec9ed6d810b56388c508f4121597bfbba70d41a6dfeee4d8cad5f295fc32 0.1s done
+#3 CACHED
+
+#4 [internal] load metadata for docker.io/library/debian:trixie-slim
+#4 DONE 0.3s
+
+#5 [internal] load metadata for registry.gitlab.com/xen-project/people/olkur/xen/tests-artifacts/qemu-system-riscv64:8.2.0-aia-riscv64
+#5 DONE 0.4s
+
+#6 [internal] load .dockerignore
+#6 transferring context: 151B 0.0s done
+#6 DONE 0.1s
+
+#7 [internal] load build context
+#7 DONE 0.0s
+
+#8 [internal] preparing inline document
+#8 DONE 0.0s
+
+#9 FROM registry.gitlab.com/xen-project/people/olkur/xen/tests-artifacts/qemu-system-riscv64:8.2.0-aia-riscv64@sha256:c81104de7e8d34eac8dc9f35d6b136cb423970657fca1cb3ed9d09c966522895
+#9 resolve registry.gitlab.com/xen-project/people/olkur/xen/tests-artifacts/qemu-system-riscv64:8.2.0-aia-riscv64@sha256:c81104de7e8d34eac8dc9f35d6b136cb423970657fca1cb3ed9d09c966522895 0.1s done
+#9 DONE 0.1s
+
+#10 [busybox-builder 1/4] FROM docker.io/library/debian:trixie-slim@sha256:a99cfc517144bc59b1978475ec53b46ecabec7e43635402ee5b77cc54cd1b20a
+#10 resolve docker.io/library/debian:trixie-slim@sha256:a99cfc517144bc59b1978475ec53b46ecabec7e43635402ee5b77cc54cd1b20a
+#10 resolve docker.io/library/debian:trixie-slim@sha256:a99cfc517144bc59b1978475ec53b46ecabec7e43635402ee5b77cc54cd1b20a 0.1s done
+#10 DONE 0.2s
+
+#7 [internal] load build context
+#7 transferring context: 238B done
+#7 DONE 0.1s
+
+#11 [stage-1  7/16] COPY check-initrd-libs.sh /build/
+#11 CACHED
+
+#12 [busybox-builder 4/4] RUN     curl -fsSLO https://busybox.net/downloads/busybox-1.36.1.tar.bz2 &&     tar -xf busybox-1.36.1.tar.bz2 -C /busybox --strip-components=1 &&     cd /busybox &&     make defconfig &&     sed "/CONFIG_STATIC\b/s/.*/CONFIG_STATIC=y/" -i .config &&     sed -i 's/CONFIG_TC=y/# CONFIG_TC is not set/' .config &&     make -j$(grep -c '^processor' /proc/cpuinfo) &&     make install CONFIG_PREFIX=/busybox-install
+#12 CACHED
+
+#13 [stage-1 12/16] COPY --from=registry.gitlab.com/xen-project/people/olkur/xen/tests-artifacts/qemu-system-riscv64:8.2.0-aia-riscv64     /qemu-system-riscv64 /opensbi-riscv64-generic-fw_dynamic.bin /bin/
+#13 CACHED
+
+#14 [busybox-builder 2/4] RUN apt-get update &&     apt-get install -y --no-install-recommends         build-essential         gcc-riscv64-linux-gnu         libc6-dev-riscv64-cross         make         curl         ca-certificates         bzip2 &&     rm -rf /var/lib/apt/lists/*
+#14 CACHED
+
+#15 [stage-1  3/16] RUN <<EOF (#!/bin/bash...)
+#15 CACHED
+
+#16 [stage-1  6/16] RUN mkdir -p lib &&     for lib in /usr/lib/ld-linux-riscv64-lp64d.so.1                /usr/lib/riscv64-linux-gnu/libc.so.6                /usr/lib/riscv64-linux-gnu/libuuid.so.1                /usr/lib/riscv64-linux-gnu/libncurses.so.6                /usr/lib/riscv64-linux-gnu/libz.so.1                /usr/lib/riscv64-linux-gnu/libyajl.so.2                /usr/lib/riscv64-linux-gnu/libfdt.so.1                /usr/lib/riscv64-linux-gnu/libm.so.6                /usr/lib/riscv64-linux-gnu/libtinfo.so.6; do         cp "$lib" ./lib/;     done
+#16 CACHED
+
+#17 [stage-1 11/16] RUN touch /bin/Image.gz
+#17 CACHED
+
+#18 [stage-1  8/16] RUN sh /build/check-initrd-libs.sh /build/initrd
+#18 CACHED
+
+#19 [stage-1 10/16] RUN mkdir -p /tmp/domu-initrd/bin /tmp/domu-initrd/sbin              /tmp/domu-initrd/proc /tmp/domu-initrd/sys              /tmp/domu-initrd/dev /tmp/domu-initrd/etc/init.d &&     cp -a /build/initrd/bin/busybox /tmp/domu-initrd/bin/ &&     /tmp/domu-initrd/bin/busybox --install -s /tmp/domu-initrd/bin/ &&     printf '%s\n'         '#!/bin/sh'         'mount -t proc proc /proc'         'mount -t sysfs sysfs /sys'         'echo "domU booted!"'         'exec /bin/sh'     > /tmp/domu-initrd/etc/init.d/rcS &&     chmod +x /tmp/domu-initrd/etc/init.d/rcS &&     mkdir -p /build/domu-initrd &&     genext2fs -b 4096 -N 512 -U -d /tmp/domu-initrd/ /build/domu-initrd/domu-initrd.img &&     rm -rf /tmp/domu-initrd
+#19 CACHED
+
+#20 [stage-1  9/16] WORKDIR /build
+#20 CACHED
+
+#21 [busybox-builder 3/4] WORKDIR /busybox
+#21 CACHED
+
+#22 [stage-1  4/16] WORKDIR /build/initrd
+#22 CACHED
+
+#23 [stage-1  5/16] COPY --from=busybox-builder /busybox-install .
+#23 CACHED
+
+#24 [stage-1  2/16] WORKDIR /build
+#24 CACHED
+
+#25 [stage-1 13/16] COPY config_tools.status config_xen.status xl.conf domu.cfg /build/configs/
+#25 CACHED
+
+#26 [stage-1 14/16] COPY Makefile .
+#26 DONE 0.2s
+
+#27 [stage-1 15/16] COPY generate_dtb.sh /build/dtb/
+#27 DONE 0.3s
+
+#28 [stage-1 16/16] RUN chmod -R 755 /bin && chown -R user:user /build
+#28 DONE 9.3s
+
+#29 exporting to image
+#29 exporting layers
+#29 exporting layers 1.9s done
+#29 exporting manifest sha256:af5a0404366019436e51ad20c3b390915805f185b26700a0420dc1a9495f647b 0.1s done
+#29 exporting config sha256:996f8f0e50968ca274ea0a74642f59ea68fe142d5cefdc476718f1f760ed05a3 0.1s done
+#29 exporting attestation manifest sha256:d0d1f5c938dfeb6419fb79e6d1e0fdcf142ef6fdceaad86fbd4251ddc8fb23ee 0.1s done
+#29 exporting manifest list sha256:49d4d79257e809c9c828df4ee74be484c417dbcb885257c2a6eb448ba678dacc
+#29 exporting manifest list sha256:49d4d79257e809c9c828df4ee74be484c417dbcb885257c2a6eb448ba678dacc 0.1s done
+#29 naming to docker.io/local/trixie-riscv64:latest 0.0s done
+#29 unpacking to docker.io/local/trixie-riscv64:latest
+#29 unpacking to docker.io/local/trixie-riscv64:latest 0.6s done
+#29 DONE 3.2s
+
+ [33m2 warnings found (use docker --debug to expand):
+[0m - FromPlatformFlagConstDisallowed: FROM --platform flag should not use constant value "linux/amd64" (line 2)
+ - FromPlatformFlagConstDisallowed: FROM --platform flag should not use constant value "linux/amd64" (line 31)
