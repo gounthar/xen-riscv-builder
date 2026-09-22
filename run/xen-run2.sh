@@ -116,7 +116,13 @@ send 14b ptscheck 'ls -ld /dev/pts && ls -l /dev/ptmx'
 # (libxl_create.c:1982 console_xswait_callback). That node is written by
 # xenconsoled, which ships in the image but is not started by dom0's init.
 # Run 4 died here with the vif already attached and on the bridge.
+# MULTINODE=1 attaches to one domU only, so xenconsoled also logs every
+# guest's console to a file; the agent's is printed once the server is gone.
+if [ "${MULTINODE:-0}" = "1" ]; then
+send 15 consoled 'mkdir -p /var/log/xen/console && xenconsoled --pid-file /var/run/xenconsoled.pid --log=guest --log-dir=/var/log/xen/console'
+else
 send 15 consoled 'xenconsoled --pid-file /var/run/xenconsoled.pid'
+fi
 send 16 psxen 'ps | grep -c xenconsole'
 
 printf 'echo ---CREATE---\n'
@@ -151,6 +157,35 @@ elif [ "${NETCHECK:-0}" = "1" ]; then
     send 23 ping2    'ping -c 5 -W 5 192.168.128.2'
     send 24 vifstat  'ip -s link show vif1.0'
     send 25 list2    'xl list'
+elif [ "${MULTINODE:-0}" = "1" ]; then
+    # Two-node K3s: the agent (domu2) first and detached, then the server
+    # (domu, domu-mn.cfg) with its console attached. A dom0 background job
+    # waits for PAYLOAD_DONE in the server's console log, gives the agent up
+    # to 600 s to reach its own, then prints the agent's console log. It keys
+    # on the logs, not on the domains: run 43 showed a powered-off domU stays
+    # in "xl list" (domain_relinquish_resources() is -ENOSYS on riscv), so a
+    # wait for the domain to go never ends.
+    #
+    # Run 40 typed that job as one 300-character line while domu2's earlycon
+    # output was flooding the same serial console; characters were lost, the
+    # shell sat at a ">" continuation prompt, and it swallowed the server's
+    # xl create. So: wait out the agent's boot burst here on the host, and
+    # write the job as short lines, each checked by its own marker, into
+    # /mnt (run 41: the dom0 image has no /tmp). The end
+    # marker is assembled from $E so the tty echo of what we type cannot
+    # match it.
+    send 17 create2  'xl create /domu/domu2.cfg'
+    sleep "${AGENT_SETTLE:-60}"
+    send 18 list1    'xl list'
+    send 19a al1     "echo 'C=/var/log/xen/console; T=PAYLOAD_DONE' > /mnt/al.sh"
+    send 19b al2     "echo 'until grep -q \$T \$C/guest-domu.log; do sleep 10; done' >> /mnt/al.sh"
+    send 19c al3     "echo 'n=0; until grep -q \$T \$C/guest-domu2.log; do' >> /mnt/al.sh"
+    send 19d al4     "echo '[ \$n -ge 60 ] && break; sleep 10; n=\$((n+1)); done' >> /mnt/al.sh"
+    send 19e al5     "echo 'echo ---AGENT-LOG---; cat \$C/guest-domu2.log' >> /mnt/al.sh"
+    send 19f al6     "echo 'xl list; E=END; echo ---AGENT-LOG-\$E---' >> /mnt/al.sh"
+    send 19g alshow  'cat /mnt/al.sh; wc -l < /mnt/al.sh'
+    send 19h albg    'sh /mnt/al.sh &'
+    printf 'xl create -c /domu/domu-mn.cfg\n'
 else
     printf 'xl create -c /domu/domu.cfg\n'
 fi

@@ -116,7 +116,8 @@ create-tools-dirs: create-common-dirs
 # libxl's compiled-in XEN_SCRIPT_DIR is /etc/xen/scripts (tools/config.h).
 	ln -sfn /dist/install/etc/xen/scripts $(INITRD_DIR)/etc/xen/scripts
 	cp $(CONFIGS_DIR)/xl.conf $(INITRD_DIR)/etc/xen/
-	cp $(CONFIGS_DIR)/domu.cfg $(INITRD_DIR)/domu/
+# domu.cfg is the single-node run; domu-mn.cfg and domu2.cfg the two-node one.
+	cp $(CONFIGS_DIR)/domu*.cfg $(INITRD_DIR)/domu/
 	cp $(DOMU_KERNEL) $(INITRD_DIR)/domu/Image.gz
 	cp $(DOMU_INITRD_IMG) $(INITRD_DIR)/domu/initrd.img
 
