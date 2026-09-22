@@ -157,6 +157,15 @@ elif [ "${NETCHECK:-0}" = "1" ]; then
     send 23 ping2    'ping -c 5 -W 5 192.168.128.2'
     send 24 vifstat  'ip -s link show vif1.0'
     send 25 list2    'xl list'
+elif [ "${PINGPAIR:-0}" = "1" ]; then
+    # The A/B for the page_get_owner_and_reference() stub: two domUs, no K3s,
+    # one pinging the other with frames big enough that the receiving vif
+    # copies from the sender's grant. domu holds itself up (net.hold), domu2
+    # pings it and its console is attached, so the result is in this log.
+    send 17 createa  'xl create /domu/domu-ping-a.cfg'
+    sleep "${AGENT_SETTLE:-60}"
+    send 18 list1    'xl list'
+    printf 'xl create -c /domu/domu-ping-b.cfg\n'
 elif [ "${MULTINODE:-0}" = "1" ]; then
     # Two-node K3s: the agent (domu2) first and detached, then the server
     # (domu, domu-mn.cfg) with its console attached. A dom0 background job
