@@ -249,9 +249,12 @@ if [ -n "${WAIT_LOG:-}" ]; then
 else
     sleep "${POSTCREATE:-1200}"
 fi
-printf 'echo ---DOM0-TMPFS---; df -k /mnt; ls -ls /mnt/disk.img\n'
-printf 'echo ---HOTPLUG-LOG---\n'
-printf 'tail -80 /var/log/xen/xen-hotplug.log 2>&1\n'
+# One line at a time with a gap, like send(): run 53 typed these four back
+# to back and the serial input dropped characters, so the last arrived as
+# "echo -" and the end marker never printed.
+printf 'echo ---DOM0-TMPFS---; df -k /mnt; ls -ls /mnt/disk.img\n'; sleep "$GAP"
+printf 'echo ---HOTPLUG-LOG---\n'; sleep "$GAP"
+printf 'tail -80 /var/log/xen/xen-hotplug.log 2>&1\n'; sleep "$GAP"
 printf 'echo ---HOTPLUG-END---\n'
 
 sleep "$HOLD"
