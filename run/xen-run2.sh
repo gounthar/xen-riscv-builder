@@ -111,7 +111,13 @@ if [ "${K3S_DISK:-0}" = "1" ]; then
     # test=k3s. Give the server the disk; the agent stays on tmpfs.
     if [ "${MULTINODE:-0}" = "1" ]; then
         send 12f mndisk "sed -i 's/test=k3s/test=k3s k3s.disk=1/' /domu/domu-mn.cfg"
-        send 12g mndisk2 "grep -q '^disk' /domu/domu-mn.cfg || echo \"disk = [ 'format=raw,vdev=xvda,access=rw,backendtype=phy,target=/mnt/disk.img' ]\" >> /domu/domu-mn.cfg"
+        # Short lines only: run 55 typed this as one 150-character line and
+        # the serial input mangled it into '>> cat /domu/domu-mn.cfg', so the
+        # server booted without a disk. Built from two variables instead.
+        send 12g1 mnd1 "O=format=raw,vdev=xvda,access=rw,backendtype=phy"
+        send 12g2 mnd2 "T=target=/mnt/disk.img"
+        send 12g3 mnd3 "echo \"disk = [ '\$O,\$T' ]\" >> /domu/domu-mn.cfg"
+        send 12g4 mnd4 "grep -c '^disk' /domu/domu-mn.cfg"
         send 12h mnshow "cat /domu/domu-mn.cfg"
     fi
 fi
