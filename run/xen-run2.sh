@@ -37,8 +37,19 @@ send 2 addbr    'brctl addbr xenbr0'
 send 3 brup     'ip link set xenbr0 up'
 send 4 braddr   'ip addr add 192.168.128.1/24 dev xenbr0'
 send 5 brshow   'ip -o addr show xenbr0'
-send 6 tmpfs    'mount -t tmpfs -o size=96m tmpfs /mnt'
+# DISK_MB sizes the disk image. The default 64 MiB is written out as zeros,
+# as in every run so far. Anything larger is created sparse (seek, no data),
+# so dom0's tmpfs only spends RAM on the blocks the guest actually writes;
+# that is the number k3s.disk=1 is about. TMPFS_MB defaults to 32 MiB of
+# headroom over the image; the dom0 script al.sh (MULTINODE) lives there too.
+DISK_MB="${DISK_MB:-64}"
+TMPFS_MB="${TMPFS_MB:-$((DISK_MB + 32))}"
+send 6 tmpfs    "mount -t tmpfs -o size=${TMPFS_MB}m tmpfs /mnt"
+if [ "$DISK_MB" = 64 ]; then
 send 7 diskimg  'dd if=/dev/zero of=/mnt/disk.img bs=1M count=64 2>/dev/null'
+else
+send 7 diskimg  "dd if=/dev/zero of=/mnt/disk.img bs=1M count=0 seek=${DISK_MB} 2>/dev/null"
+fi
 send 8 disksize 'ls -l /mnt/disk.img'
 send 9 xlver    'xl info 2>&1 | head -3'
 
@@ -86,6 +97,14 @@ fi
 # throughput is the limit, silencing the guest should make it race ahead.
 if [ "${GUEST_QUIET:-0}" = "1" ]; then
     send 12d quiet "sed -i 's/test=all/loglevel=1 test=all/' /domu/domu.cfg"
+fi
+
+# K3S_DISK=1 asks the payload to put K3s's agent/ and server/ on xvda
+# (xen-riscv-domu-containers, init: k3s.disk). Needs WITH_DISK=1 and a
+# DISK_MB of 1.5-2 GiB; the payload reports K3S_FAIL rather than fall back
+# to tmpfs if the device is missing.
+if [ "${K3S_DISK:-0}" = "1" ]; then
+    send 12e k3sdisk "sed -i 's/test=all/test=all k3s.disk=1/' /domu/domu.cfg"
 fi
 
 send 13 showcfg2 'cat /domu/domu.cfg'
@@ -204,6 +223,7 @@ fi
 # first; if the guest is still up, this text lands harmlessly in a console
 # whose only reader is /init, which ignores it.
 sleep "${POSTCREATE:-1200}"
+printf 'echo ---DOM0-TMPFS---; df -k /mnt; ls -ls /mnt/disk.img\n'
 printf 'echo ---HOTPLUG-LOG---\n'
 printf 'tail -80 /var/log/xen/xen-hotplug.log 2>&1\n'
 printf 'echo ---HOTPLUG-END---\n'

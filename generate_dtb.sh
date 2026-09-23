@@ -464,7 +464,7 @@ case "${TEST_CASE}" in
         CONFIG_FILE="dom0.conf"
         PLATFORM_NAME=dom0-qemu-virt
         PLATFORM_RAM_SIZE=6g
-        PLATFORM_XEN_BOOTARGS="com1=poll sched=null dom0_max_vcpus=1 dom0_mem=1024M loglvl=all guest_loglvl=all"
+        PLATFORM_XEN_BOOTARGS="com1=poll sched=null dom0_max_vcpus=1 dom0_mem=${DOM0_MEM:-1024M} loglvl=all guest_loglvl=all"
         DOM0_KERNEL_ADDR=0x808ef000
         DOM0_KERNEL_PATH=${KERNEL}
         DOM0_RAMDISK_ADDR=0x90400000
