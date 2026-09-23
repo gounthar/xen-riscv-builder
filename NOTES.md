@@ -138,7 +138,7 @@ Four knobs added for the payload's `k3s.disk=1` (runs 52-56):
 | variable | default | what it does |
 |---|---|---|
 | `DISK_MB` | 64 | size of `/mnt/disk.img` in dom0. 64 is written out as zeros as before; anything larger is created sparse, so dom0's tmpfs only pays for blocks the guest writes. `TMPFS_MB` defaults to `DISK_MB + 32` |
-| `K3S_DISK` | 0 | adds `k3s.disk=1` to `domu.cfg`; with `MULTINODE=1`, gives the server guest (`domu-mn.cfg`) a disk stanza and `k3s.disk=1`, and leaves the agent on tmpfs. Needs `WITH_DISK=1` and `DISK_MB` above 64: K3s used 159M of 512 at `K3S_OK` |
+| `K3S_DISK` | 0 | adds `k3s.disk=1` to `domu.cfg`; with `MULTINODE=1`, gives the server guest (`domu-mn.cfg`) a disk stanza and `k3s.disk=1`, and leaves the agent on tmpfs. Needs `WITH_DISK=1` and `DISK_MB` above 64: K3s used 159M of 512 at `K3S_OK` with CoreDNS on the server; run 64 measured 90M with CoreDNS on the agent |
 | `WAIT_LOG` | unset | path of this run's own log on the host. The driver waits for `reboot: Power down` in it, sends `^]` to detach from the guest's console, then types the post-run commands (dom0 tmpfs usage, hotplug log). `POSTCREATE` stays the upper bound |
 | `DOM0_MEM` | 1024M | read by `generate_dtb.sh`, goes on Xen's command line. Leave it at 1024M, see below |
 
