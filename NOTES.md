@@ -186,7 +186,8 @@ the CPU number; `staging` defines it correctly.
 **Exp 6 (runs 60-66).** `this_cpu_ptr()` changed to offset by
 `__per_cpu_offset[get_processor_id()]` in a copy of the tree (`~/xen-riscv/xen-pcpu`), with
 the `place_modules()` backport above as well, binary `4307f2165ce4`
-(`~/xen-riscv/xen-bin-pcpu-4307f2165ce4`). Both changes are `staging`'s code brought into this
+(`~/xen-riscv/xen-bin-pcpu-4307f2165ce4`), cross-compiled: `local/trixie-riscv64:latest` is an
+amd64 image (`uname -m` is `x86_64`) running `riscv64-linux-gnu-gcc` 14.2. Both changes are `staging`'s code brought into this
 branch, not fixes of ours. Run with `~/xen-run/kdisk-series-pcpu.sh` (fedora1 only), a copy of
 `kdisk-series.sh` that also stops a run on `Assertion .* failed` rather than waiting out the
 cap: `kdisk-series-pcpu.sh 60:0 61:0 62:0 63:1 64:1 65:1`, then
