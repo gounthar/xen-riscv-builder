@@ -92,17 +92,55 @@ Experiment-specific, and meaningless outside this run:
   `xen-run2.sh` only check the `/dev/fd` links and devpts instead of creating
   them, which is how the rcS change above was verified (four runs, 2026-09-21).
 
+## The run drivers, and the four modes
+
+`run/xen-run2.sh` types into dom0's console one command at a time and prints
+`STEP<n>:<name>:rc=<status>` after each, so silence names the command it died on. Four
+modes, selected by environment variable:
+
+| mode | what it does | guest configs used |
+|---|---|---|
+| default | one domU, console attached | `domu.cfg` |
+| `TRACE=1` | one domU, created detached, then `xl list`/`vcpu-list`/`debug-keys` | `domu.cfg` |
+| `NETCHECK=1` | one domU, detached, dom0 pings it across `xenbr0` | `domu.cfg` |
+| `MULTINODE=1` | two domUs: agent detached, server attached; two-node K3s | `domu2.cfg`, `domu-mn.cfg` |
+| `PINGPAIR=1` | two domUs, no K3s: one pings the other with 1000-byte frames | `domu-ping-a.cfg`, `domu-ping-b.cfg` |
+
+`PINGPAIR` exists to isolate one thing: a frame large enough to be grant-mapped between two
+guests reaches `page_get_owner_and_reference()`, an `assert_failed()` stub in
+`xen/arch/riscv/mm.c`. With ARM's one-line definition of that wrapper the ping is 5/5; with
+the stub it asserts at the first ping (runs 49 and 50, same image, only the Xen binary
+differing). Dom0-to-guest traffic never takes that path.
+
+### Three things that cost a run each, in the two-domU modes
+
+Worth knowing before writing another mode that types into dom0's console:
+
+- **Do not type a long line while a guest is booting.** In `MULTINODE` the second domain's
+  `earlycon` output floods the same serial console. A ~300-character line lost characters,
+  the shell sat at a `>` continuation prompt, and it swallowed the next command (run 40).
+  The driver now sleeps `AGENT_SETTLE` (60 s) on the host after the first create, and writes
+  anything long as short lines with their own markers.
+- **dom0's image has no `/tmp`.** Scratch files go in `/mnt`, the tmpfs the driver mounts
+  itself (run 41).
+- **A powered-off domU never leaves `xl list`**, because `domain_relinquish_resources()`
+  returns `-ENOSYS` on riscv. Anything that waits for a domain to disappear hangs; wait for a
+  marker in `xenconsoled`'s per-guest log instead (run 43). Only one guest's console can be
+  attached, so `MULTINODE` starts `xenconsoled` with `--log=guest --log-dir=/var/log/xen/console`
+  and prints the other guest's log from a dom0 background job.
+
 ## What is not here
 
-`out-initrd/` (235 MB) and `payload/` (354 MB) are build outputs and are
-gitignored. They are reproducible from the Makefile and the payload tree.
+`out-initrd/` (235 MB), `payload/` and `payload-mn/` (354 MB each) are build
+outputs and are gitignored. They are reproducible from the Makefile and the payload tree.
 
 The `*.orig` files in the working directory are backups of the upstream
 versions and are not committed; the first commit serves that purpose.
 
 ## Warning about editing these files
 
-`domu.cfg` is baked into the ext2 image at build time and `generate_dtb.sh` is
-baked into the container image. Editing the copy on disk changes nothing unless
+The guest configs (`domu.cfg` and now `domu-mn.cfg`, `domu2.cfg`, `domu-ping-a.cfg`,
+`domu-ping-b.cfg`, all copied by the `domu*.cfg` glob) are baked into the ext2 image at build
+time and `generate_dtb.sh` is baked into the container image. Editing the copy on disk changes nothing unless
 you rebuild or mount over it. Read a file back with
 `debugfs -R "cat ..." <image>`, never `cat` the one on disk.
