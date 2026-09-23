@@ -147,8 +147,8 @@ attached guest powers off, the console stays attached to the dead guest (runs 24
 at `Power down` with none of the post-run output). It keys on the power-down line rather
 than a timer, because detaching early loses the guest's output.
 
-The runs were chained by a small script kept on fedora1 only, `~/xen-run/kdisk-series.sh`
-(not in this repo): `bash kdisk-series.sh 57:1 58:1` runs 57 and 58 with `MULTINODE=1`
+The runs were chained by `run/kdisk-series.sh` (run from `~/xen-run/` on fedora1; it
+hardcodes `R=$HOME/xen-run`): `bash kdisk-series.sh 57:1 58:1` runs 57 and 58 with `MULTINODE=1`
 (`N:0` for one domU) and `WITH_DISK=1 DISK_MB=512 K3S_DISK=1 WAIT_LOG=<its log>`, stops each
 run itself, and appends a `runN kdisk ...` line per run and `KDISK_SERIES_DONE` to
 `repeat2.log`.
@@ -188,7 +188,7 @@ the CPU number; `staging` defines it correctly.
 the `place_modules()` backport above as well, binary `4307f2165ce4`
 (`~/xen-riscv/xen-bin-pcpu-4307f2165ce4`), cross-compiled: `local/trixie-riscv64:latest` is an
 amd64 image (`uname -m` is `x86_64`) running `riscv64-linux-gnu-gcc` 14.2. Both changes are `staging`'s code brought into this
-branch, not fixes of ours. Run with `~/xen-run/kdisk-series-pcpu.sh` (fedora1 only), a copy of
+branch, not fixes of ours. Run with `run/kdisk-series-pcpu.sh`, a copy of
 `kdisk-series.sh` that also stops a run on `Assertion .* failed` rather than waiting out the
 cap: `kdisk-series-pcpu.sh 60:0 61:0 62:0 63:1 64:1 65:1`, then
 `DOM0_MEM=3072M kdisk-series-pcpu.sh 66:0`. All seven passed with no assertion; run 66 is the
@@ -201,9 +201,10 @@ put back to `08074f7f22ee` afterwards.
 built from xen-domu-containers branch `feat/identity-probe` (`test=identity`). The only
 difference from a normal run is one command typed into dom0 before `xl create`:
 `sed -i 's/test=all/test=identity/' /domu/domu.cfg`, then a `grep -c test=identity` to prove the
-edit landed (the log shows them as `STEP12i:ident` and `STEP12j:identchk`). The committed
-`run/xen-run2.sh` has no such step (grep: 0 hits), so that run's driver was an uncommitted
-copy. Result: no DMI in the guest, its domain UUID at `/sys/hypervisor/uuid`, the disk at
+edit landed (the log shows them as `STEP12i:ident` and `STEP12j:identchk`). That driver is
+`run/xen-run2-identity.sh`: `run/xen-run2.sh` plus those two steps, and six more lines after the
+run that print `xl list -v`, `xl list -l` uuids and the `/vm` and vbd backend xenstore keys.
+It was kept on fedora1 only until 2026-09-23, when it was copied here unchanged. Result: no DMI in the guest, its domain UUID at `/sys/hypervisor/uuid`, the disk at
 `/dev/xvda`. Log `~/xen-riscv/xen-domu-run67-IDENTITY.log`; write-up
 `rise-sponsorship/plans/2026-09-23-domu-identity-probe.md`.
 
