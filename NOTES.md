@@ -181,7 +181,20 @@ at `0x150bdc000-0x160000000` inside the top bank (run 59). Logs:
 stops, dom0 carries on, and the driver waits until `POSTCREATE` or the series cap
 (`kdisk-series.sh` stops at 5400 s). Grep the log for `Assertion` before reading a timeout
 as a slow guest. The likely cause is this branch's riscv `this_cpu_ptr()`, which offsets by
-the CPU number; `staging` defines it correctly. Not yet tested.
+the CPU number; `staging` defines it correctly.
+
+**Exp 6 (runs 60-66).** `this_cpu_ptr()` changed to offset by
+`__per_cpu_offset[get_processor_id()]` in a copy of the tree (`~/xen-riscv/xen-pcpu`), with
+the `place_modules()` backport above as well, binary `4307f2165ce4`
+(`~/xen-riscv/xen-bin-pcpu-4307f2165ce4`). Both changes are `staging`'s code brought into this
+branch, not fixes of ours. Run with `~/xen-run/kdisk-series-pcpu.sh` (fedora1 only), a copy of
+`kdisk-series.sh` that also stops a run on `Assertion .* failed` rather than waiting out the
+cap: `kdisk-series-pcpu.sh 60:0 61:0 62:0 63:1 64:1 65:1`, then
+`DOM0_MEM=3072M kdisk-series-pcpu.sh 66:0`. All seven passed with no assertion; run 66 is the
+first 3072M run to finish the k3s.disk test. Weak evidence only: at the earlier 2-in-7 rate,
+seven clean runs happen about 9.5% of the time. Logs `~/xen-riscv/xen-domu-run6[0-6]-PCPU.log`;
+write-up `rise-sponsorship/plans/2026-09-23-exp6-percpu.md`. The installed Xen on fedora1 was
+put back to `08074f7f22ee` afterwards.
 
 **Over ssh, do not `pgrep -f xen-run2.sh` and kill what it finds**: the pattern matches the
 ssh command line itself, and the cleanup kills its own shell halfway.
