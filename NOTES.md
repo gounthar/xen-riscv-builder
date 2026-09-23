@@ -197,6 +197,16 @@ seven clean runs happen about 9.5% of the time. Logs `~/xen-riscv/xen-domu-run6[
 write-up `rise-sponsorship/plans/2026-09-23-exp6-percpu.md`. The installed Xen on fedora1 was
 put back to `08074f7f22ee` afterwards.
 
+**Run 67, the identity probe.** Xen `08074f7f22ee`, the default single-domU mode, a payload
+built from xen-domu-containers branch `feat/identity-probe` (`test=identity`). The only
+difference from a normal run is one command typed into dom0 before `xl create`:
+`sed -i 's/test=all/test=identity/' /domu/domu.cfg`, then a `grep -c test=identity` to prove the
+edit landed (the log shows them as `STEP12i:ident` and `STEP12j:identchk`). The committed
+`run/xen-run2.sh` has no such step (grep: 0 hits), so that run's driver was an uncommitted
+copy. Result: no DMI in the guest, its domain UUID at `/sys/hypervisor/uuid`, the disk at
+`/dev/xvda`. Log `~/xen-riscv/xen-domu-run67-IDENTITY.log`; write-up
+`rise-sponsorship/plans/2026-09-23-domu-identity-probe.md`.
+
 **Over ssh, do not `pgrep -f xen-run2.sh` and kill what it finds**: the pattern matches the
 ssh command line itself, and the cleanup kills its own shell halfway.
 
