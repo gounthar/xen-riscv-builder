@@ -101,8 +101,10 @@ fi
 
 # K3S_DISK=1 asks the payload to put K3s's agent/ and server/ on xvda
 # (xen-riscv-domu-containers, init: k3s.disk). Needs WITH_DISK=1 and a
-# DISK_MB of 1.5-2 GiB; the payload reports K3S_FAIL rather than fall back
-# to tmpfs if the device is missing.
+# DISK_MB above 64: run 52 used 159M of DISK_MB=512 at K3S_OK. The payload
+# reports K3S_FAIL rather than fall back to tmpfs if the device is missing.
+# Leave DOM0_MEM at 1024M: run 51 with 3072M split dom0 into three banks and
+# Xen faulted loading the dom0 initrd across the first bank's end.
 if [ "${K3S_DISK:-0}" = "1" ]; then
     send 12e k3sdisk "sed -i 's/test=all/test=all k3s.disk=1/' /domu/domu.cfg"
 fi
