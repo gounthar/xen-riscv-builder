@@ -107,6 +107,13 @@ fi
 # Xen faulted loading the dom0 initrd across the first bank's end.
 if [ "${K3S_DISK:-0}" = "1" ]; then
     send 12e k3sdisk "sed -i 's/test=all/test=all k3s.disk=1/' /domu/domu.cfg"
+    # MULTINODE: the server is domu-mn.cfg, which has no disk stanza and runs
+    # test=k3s. Give the server the disk; the agent stays on tmpfs.
+    if [ "${MULTINODE:-0}" = "1" ]; then
+        send 12f mndisk "sed -i 's/test=k3s/test=k3s k3s.disk=1/' /domu/domu-mn.cfg"
+        send 12g mndisk2 "grep -q '^disk' /domu/domu-mn.cfg || echo \"disk = [ 'format=raw,vdev=xvda,access=rw,backendtype=phy,target=/mnt/disk.img' ]\" >> /domu/domu-mn.cfg"
+        send 12h mnshow "cat /domu/domu-mn.cfg"
+    fi
 fi
 
 send 13 showcfg2 'cat /domu/domu.cfg'
@@ -224,7 +231,24 @@ fi
 # reaches dom0's shell until the domain exits or the create fails. Long wait
 # first; if the guest is still up, this text lands harmlessly in a console
 # whose only reader is /init, which ignores it.
-sleep "${POSTCREATE:-1200}"
+# Nothing typed after this point reached dom0 in any earlier run: once the
+# attached guest powers off, xl's console stays attached to it (runs 24, 30,
+# 36 end at "Power down" with no hotplug output). WAIT_LOG is the run's own
+# log on the host. With it, wait for the attached guest's power-down rather
+# than a fixed time, then detach with ^] (xenconsole's escape) so what follows
+# goes to dom0's shell. Detaching early would cost the guest's output, which
+# is why this keys on the power-down line and not on a timer. POSTCREATE is
+# the upper bound either way.
+if [ -n "${WAIT_LOG:-}" ]; then
+    t=0
+    until grep -aq 'reboot: Power down' "$WAIT_LOG" 2>/dev/null || [ "$t" -ge "${POSTCREATE:-1200}" ]; do
+        sleep 10; t=$((t + 10))
+    done
+    sleep 5
+    printf '\035'; sleep 3; printf '\n'; sleep 3
+else
+    sleep "${POSTCREATE:-1200}"
+fi
 printf 'echo ---DOM0-TMPFS---; df -k /mnt; ls -ls /mnt/disk.img\n'
 printf 'echo ---HOTPLUG-LOG---\n'
 printf 'tail -80 /var/log/xen/xen-hotplug.log 2>&1\n'
