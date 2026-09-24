@@ -208,6 +208,15 @@ It was kept on fedora1 only until 2026-09-23, when it was copied here unchanged.
 `/dev/xvda`. Log `~/xen-riscv/xen-domu-run67-IDENTITY.log`; write-up
 `rise-sponsorship/plans/2026-09-23-domu-identity-probe.md`.
 
+**Runs 117-118, restart and 2 vCPUs.** Xen `4307f2165ce4`, driver `run/xen-run2-restart.sh`
+(`xen-run2.sh` plus two opt-in knobs) run through `run/restart-one.sh`, both copied here unchanged
+from the test host (their headers still say "not committed"). `RESTART=1` adds `k3s.reuse=1`
+(xen-domu-containers branch `feat/k3s-restart-test`) and, after the first guest powers off, boots a
+second guest named `domub` on the same `/mnt/disk.img` without rebooting dom0: run 117, K3s came
+back from its own state. `VCPUS=N` sets `vcpus` in `domu.cfg`: run 118 with 2, the guest printed
+`CPU1: failed to come online` and ran on one CPU. Write-up
+`rise-sponsorship/plans/2026-09-24-k3s-restart-and-2vcpu.md`.
+
 **Over ssh, do not `pgrep -f xen-run2.sh` and kill what it finds**: the pattern matches the
 ssh command line itself, and the cleanup kills its own shell halfway.
 
