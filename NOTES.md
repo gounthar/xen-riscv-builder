@@ -217,6 +217,14 @@ back from its own state. `VCPUS=N` sets `vcpus` in `domu.cfg`: run 118 with 2, t
 `CPU1: failed to come online` and ran on one CPU. Write-up
 `rise-sponsorship/plans/2026-09-24-k3s-restart-and-2vcpu.md`.
 
+**Runs 119-125, dead guests and 2 vCPUs.** Driver `run/xen-run2-zombie.sh` (`MODE=zombie` or
+`MODE=smp`) through `run/zombie-one.sh`; `RUNSH=run-gen.sh` with `GEN=generate_dtb-d0v2.sh` gave
+Xen `dom0_max_vcpus=2` for run 124 (clamped to 1 by the riscv build). Write-up
+`rise-sponsorship/plans/2026-09-24-zombie-domu-and-smp.md`. **Runs 69-74, dom0 bank layout:**
+`run/bank-series.sh`, `run/run-bank.sh` and `run/generate_dtb-bank.sh` (appends `$XEN_EXTRA`, used
+for `bootscrub=off`); write-up `rise-sponsorship/plans/2026-09-23-run64-run66-anomalies.md`. All
+copied unchanged from the test host; the `run.sh`/`generate_dtb.sh` they copy are not in this repo.
+
 **Over ssh, do not `pgrep -f xen-run2.sh` and kill what it finds**: the pattern matches the
 ssh command line itself, and the cleanup kills its own shell halfway.
 
