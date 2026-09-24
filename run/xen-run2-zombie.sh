@@ -13,6 +13,10 @@
 # MODE=smp     one guest, VCPUS (default 2), test=identity debug=1, console
 #              attached. Once the guest drops to its shell, dump what it sees
 #              of its CPUs and IMSICs, then detach.
+# MODE=smpd    (test 1, runs 130+) the same guest created paused (xl create
+#              -p), xl vcpu-list before unpause, then xl vcpu-list sampled
+#              from dom0 every 2 s through the guest's CPU bring-up. Use with
+#              KEEPBC=1 so the guest's kernel lines reach the serial log.
 set -u
 GAP="${GAP:-5}"
 SETTLE="${SETTLE:-150}"
@@ -71,7 +75,7 @@ sendw 10 settype "grep -q '^type' /domu/domu.cfg || echo 'type = \"pvh\"' >> /do
 [ "${KEEPBC:-0}" = 1 ] || sendw 12c nobootc "sed -i 's/ keep_bootcon//' /domu/domu.cfg"
 sendw 12i ident "sed -i 's/test=all/test=identity/' /domu/domu.cfg"
 sendw 12j identc 'grep -c test=identity /domu/domu.cfg'
-if [ "$MODE" = smp ]; then
+if [ "$MODE" = smp ] || [ "$MODE" = smpd ]; then
   sendw 12v1 vcpus "sed -i 's/^vcpus = .*/vcpus = ${VCPUS:-2}/' /domu/domu.cfg"
   sendw 12v2 vcpusc "grep -c '^vcpus = ${VCPUS:-2}\$' /domu/domu.cfg"
   sendw 12d dbg "sed -i 's/test=identity/test=identity debug=1/' /domu/domu.cfg"
@@ -89,6 +93,25 @@ sendw 14b ptschk 'ls -ld /dev/pts && ls -l /dev/ptmx'
 sendw 15 consd 'mkdir -p /var/log/xen/console'
 sendw 15b consd2 'xenconsoled --log=guest --log-dir=/var/log/xen/console'
 sendw 16 psxen 'ps | grep -c xenconsole'
+
+if [ "$MODE" = smpd ]; then
+  sendw 30 cpause 'xl create -p /domu/domu.cfg'
+  sendw 31 lp 'xl list'
+  sendw 32 vp 'xl vcpu-list'
+  sendw 33 unp 'xl unpause domu; echo UNPAUSED'
+  # Test 2 (run 133+): VLN/VLS/VLCAP stretch the sampling; VLXL=1 adds xl list.
+  if [ "${VLXL:-0}" = 1 ]; then
+    SENDW_CAP=${VLCAP:-900} sendw 34 vloop "for i in \$(seq ${VLN:-90}); do echo VL\$i; xl list domu; xl vcpu-list domu; sleep ${VLS:-2}; done"
+  else
+    SENDW_CAP=${VLCAP:-900} sendw 34 vloop "for i in \$(seq ${VLN:-90}); do echo VL\$i; xl vcpu-list domu; sleep ${VLS:-2}; done"
+  fi
+  sendw 35 gsmp 'grep -a -E "smp:|CPU1|SBI.*detected" /var/log/xen/console/guest-domu.log'
+  sendw 40 xllist 'xl list'
+  sendw 41 vcpul 'xl vcpu-list'
+  printf 'E=END; echo ---SMP-$E---\n'
+  sleep "$HOLD"
+  exit 0
+fi
 
 if [ "$MODE" = smp ]; then
   printf 'echo ---CREATE---\n'
