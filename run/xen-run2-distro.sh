@@ -101,8 +101,7 @@ fi
 
 # K3S_DISK=1 asks the payload to put K3s's agent/ and server/ on xvda
 # (xen-riscv-domu-containers, init: k3s.disk). Needs WITH_DISK=1 and a
-# DISK_MB above 64: run 52 used 159M of DISK_MB=512 at K3S_OK (CoreDNS on
-# the server; run 64 had it on the agent and used 90M). The payload
+# DISK_MB above 64: run 52 used 159M of DISK_MB=512 at K3S_OK. The payload
 # reports K3S_FAIL rather than fall back to tmpfs if the device is missing.
 # Leave DOM0_MEM at 1024M: run 51 with 3072M split dom0 into three banks and
 # Xen faulted loading the dom0 initrd across the first bank's end.
@@ -123,6 +122,12 @@ if [ "${K3S_DISK:-0}" = "1" ]; then
     fi
 fi
 
+# DISTRO (run 68): the ramdisk is the distro-root installer
+# (xen-domu-containers distro/), which ignores test= and installs a Debian
+# root onto root=. The kernel ignores root= itself when an initramfs is
+# present; it is there for the installer and for the reader of the log.
+send 12i distro "sed -i 's/test=all/root=\\/dev\\/xvda/' /domu/domu.cfg"
+send 12j distrochk 'grep -c root=/dev/xvda /domu/domu.cfg'
 send 13 showcfg2 'cat /domu/domu.cfg'
 # The block hotplug script's claim_lock (locking.sh) loops forever unless
 # `stat -L /dev/stdin` works, and devtmpfs does not create the /dev/fd family
@@ -262,6 +267,13 @@ fi
 printf 'echo ---DOM0-TMPFS---; df -k /mnt; ls -ls /mnt/disk.img\n'; sleep "$GAP"
 printf 'echo ---HOTPLUG-LOG---\n'; sleep "$GAP"
 printf 'tail -80 /var/log/xen/xen-hotplug.log 2>&1\n'; sleep "$GAP"
+printf 'echo ---XL-LIST-V---; xl list -v\n'; sleep "$GAP"
+printf 'xl list -l | grep -i -E "uuid|domid"\n'; sleep "$GAP"
+printf 'xenstore-ls -f /vm 2>&1 | head -20\n'; sleep "$GAP"
+printf 'xenstore-read /local/domain/1/vm\n'; sleep "$GAP"
+printf 'xenstore-ls -f /local/domain/0/backend/vbd | head -40\n'; sleep "$GAP"
+printf 'free -m\n'; sleep "$GAP"
+printf 'echo ---XL-LIST-END---\n'; sleep "$GAP"
 printf 'echo ---HOTPLUG-END---\n'
 
 sleep "$HOLD"

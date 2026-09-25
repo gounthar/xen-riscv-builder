@@ -14,6 +14,15 @@
 #      with a non-zero status names one that ran and failed. Silence is no
 #      longer ambiguous.
 #
+# COPY of xen-run2.sh for the 2026-09-24 restart and 2-vCPU tests (runs 117+),
+# not committed. Two additions, both off by default:
+#   RESTART=1  adds k3s.reuse=1, writes /domu/domub.cfg (same config, xl name
+#              domub, since a powered-off domU never leaves xl list on riscv),
+#              and after the first guest powers off, prints what dom0 still
+#              holds for it, then xl create -c the second guest on the SAME
+#              /mnt/disk.img. WAIT_LOG is required.
+#   VCPUS=N    sets vcpus = N in domu.cfg (checked with grep -c).
+#
 # Markers are STEP<n>:<name>:rc=<status>. Grep the log for '^STEP' to get the
 # whole sequence at a glance.
 
@@ -121,6 +130,17 @@ if [ "${K3S_DISK:-0}" = "1" ]; then
         send 12g4 mnd4 "grep -c '^disk' /domu/domu-mn.cfg"
         send 12h mnshow "cat /domu/domu-mn.cfg"
     fi
+fi
+
+if [ "${RESTART:-0}" = "1" ]; then
+    send 12r1 reuse "sed -i 's/k3s.disk=1/k3s.disk=1 k3s.reuse=1/' /domu/domu.cfg"
+    send 12r2 reusechk "grep -c 'k3s.reuse=1' /domu/domu.cfg"
+    send 12r3 cfgb "sed 's/^name = .*/name = \"domub\"/' /domu/domu.cfg > /domu/domub.cfg"
+    send 12r4 cfgbchk "grep -c domub /domu/domub.cfg; grep -c reuse /domu/domub.cfg"
+fi
+if [ -n "${VCPUS:-}" ]; then
+    send 12v1 vcpus "sed -i 's/^vcpus = .*/vcpus = ${VCPUS}/' /domu/domu.cfg"
+    send 12v2 vcpuschk "grep -c '^vcpus = ${VCPUS}\$' /domu/domu.cfg"
 fi
 
 send 13 showcfg2 'cat /domu/domu.cfg'
@@ -246,9 +266,30 @@ fi
 # goes to dom0's shell. Detaching early would cost the guest's output, which
 # is why this keys on the power-down line and not on a timer. POSTCREATE is
 # the upper bound either way.
+# RESTART=1: wait for the first guest's power-down, detach, show what dom0
+# still holds for it, then boot the second guest on the same disk image. Its
+# power-down is the second 'reboot: Power down' in the log.
+NPD=1
+if [ "${RESTART:-0}" = "1" ] && [ -n "${WAIT_LOG:-}" ]; then
+    t=0
+    until [ "$(grep -ac 'reboot: Power down' "$WAIT_LOG" 2>/dev/null)" -ge 1 ] || [ "$t" -ge "${POSTCREATE:-1200}" ]; do
+        sleep 10; t=$((t + 10))
+    done
+    sleep 5
+    printf '\035'; sleep 3; printf '\n'; sleep 3
+    send 30 between 'echo ---BETWEEN-BOOTS---'
+    send 31 xllist 'xl list'
+    send 32 loops 'losetup -a'
+    send 33 vbds 'xenstore-ls -f /local/domain/0/backend/vbd | head -12'
+    send 34 dimg 'ls -ls /mnt/disk.img; df -k /mnt'
+    send 35 vifs 'brctl show xenbr0'
+    printf 'echo ---BOOT2---\n'; sleep "$GAP"
+    printf 'xl create -c /domu/domub.cfg\n'
+    NPD=2
+fi
 if [ -n "${WAIT_LOG:-}" ]; then
     t=0
-    until grep -aq 'reboot: Power down' "$WAIT_LOG" 2>/dev/null || [ "$t" -ge "${POSTCREATE:-1200}" ]; do
+    until [ "$(grep -ac 'reboot: Power down' "$WAIT_LOG" 2>/dev/null)" -ge "$NPD" ] || [ "$t" -ge "${POSTCREATE:-1200}" ]; do
         sleep 10; t=$((t + 10))
     done
     sleep 5
@@ -262,6 +303,9 @@ fi
 printf 'echo ---DOM0-TMPFS---; df -k /mnt; ls -ls /mnt/disk.img\n'; sleep "$GAP"
 printf 'echo ---HOTPLUG-LOG---\n'; sleep "$GAP"
 printf 'tail -80 /var/log/xen/xen-hotplug.log 2>&1\n'; sleep "$GAP"
+if [ "${RESTART:-0}" = "1" ]; then
+    printf 'xl list\n'; sleep "$GAP"
+fi
 printf 'echo ---HOTPLUG-END---\n'
 
 sleep "$HOLD"
